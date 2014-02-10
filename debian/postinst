@@ -1,0 +1,44 @@
+#!/bin/sh
+
+set -e
+
+. /etc/default/openmediavault
+. /usr/share/openmediavault/scripts/helper-functions
+
+case "$1" in
+    configure)
+        if ! getent passwd ts3 >/dev/null 2>&1; then
+            echo "Adding teamspeak3 user..."
+            useradd --create-home --groups users --no-user-group --shell /usr/sbin/nologin ts3
+            insserv -d teamspeak3
+        else
+            echo "teamspeak3 user already exists."
+        fi
+
+        if [ -e /var/run/teamspeak3 ]; then
+            echo "Cleaning old pid file..."
+            rm -Rf /var/run/teamspeak3
+        fi
+
+        chmod 775 /opt
+        chown root:users /opt
+
+        if ! omv_config_exists "/config/services/teamspeak3"; then
+            echo "Initial configuration."
+            object="<enable>0</enable>"
+            object="${object}<password></password>"
+            object="${object}<msg></msg>"
+            omv_config_add_element "/config/services" "teamspeak3" "${object}" true
+        fi
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument" >&2
+        exit 1
+    ;;
+esac
+
+exit 0
