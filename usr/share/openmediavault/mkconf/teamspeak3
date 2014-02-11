@@ -2,12 +2,14 @@
 
 set -e
 echo "$1 -  $2" >> /usr/share/openmediavault/mkconf/zzzzzzzzzzzzz
+
 . /etc/default/openmediavault
 . /usr/share/openmediavault/scripts/helper-functions
 
 APP_PATH=/opt/teamspeak3
 USER=ts3
 INIT="/etc/init.d/teamspeak3"
+TS3WI_CONFIG="/var/www/ts3wi/config.php"
 
 get_info() {
     cd /tmp
@@ -49,6 +51,9 @@ if [ ! -d "$APP_PATH" ]; then
     TEST=$(grep 'password= ' ${APP_PATH}/details | sed -n 's/loginname= "serveradmin", password= "//p' | sed -e 's/"$//')
     #pkill ts3server_linux_${ARCHITECTURE}
     xmlstarlet ed -L -u "//services/teamspeak3/password" -v $TEST -n ${OMV_CONFIG_FILE}
+
+    chmod 775 /var/www/ts3wi/icons /var/www/ts3wi/temp /var/www/templates_c
+    chmod -R 775 /var/www/ts3wi/site/backups
 fi
 }
 
@@ -191,6 +196,48 @@ update() {
 	fi
 
 	cd - > /dev/null
+
+    if [ $(omv_config_get '//services/teamspeak3/enablewi') != "1" ]; then
+
+        port=$(omv_config_get '//services/teamspeak3/portwi')
+        lang=$(omv_config_get '//services/teamspeak3/languagewi')
+
+        cat <<EOF > ${TS3WI_CONFIG}
+<?php
+/*
+*Copyright (C) 2012-2013  Psychokiller
+*
+*This program is free software; you can redistribute it and/or modify it under the terms of
+*the GNU General Public License as published by the Free Software Foundation; either
+*version 3 of the License, or any later version.
+*
+*This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+*without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+*See the GNU General Public License for more details.
+*
+*You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
+*/
+if(!defined("SECURECHECK")) {die($lang['error_file_alone']);}
+
+$server[0]['alias']= "TS3 Server";
+$server[0]['ip']= "127.0.0.1";
+$server[0]['tport']= ${port};
+$cfglang = ${lang};
+$duration = "100";
+$fastswitch = true;
+$showicons = "left";
+$style = "new";
+$msgsend_name = "Webinterface";
+$show_motd = true;
+$show_version = true;
+?>
+EOF
+
+        a2ensite openmediavault-ts3wi
+    else
+        a2dissite openmediavault-ts3wi
+    fi
+
 }
 
 getsettings() {

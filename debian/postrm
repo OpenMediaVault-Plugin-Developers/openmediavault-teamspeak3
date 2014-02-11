@@ -7,27 +7,27 @@ set -e
 
 case "$1" in
     purge)
-        rm -Rf /opt/couchpotato & >/dev/null
+        rm -Rf /opt/teamspeak3 & >/dev/null
 
-        if [ -f "/var/run/couchpotato/couchpotato.pid" ]; then
-            PID=$(cat /var/run/couchpotato/couchpotato.pid);
+        if [ -f "/var/run/teamspeak3/teamspeak3.pid" ]; then
+            PID=$(cat /var/run/teamspeak3/teamspeak3.pid);
             kill -0 $PID 2>/dev/null;
 
             if [ $? -eq 0 ]; then
                 kill -9 $PID;
-                rm -Rf /var/run/couchpotato
+                rm -Rf /var/run/teamspeak3
             fi
         fi
 
-        omv_config_delete "//services/couchpotato"
+        omv_config_delete "//services/teamspeak3"
 
-        if [ -d "/opt/couchpotato" ]; then
-            rm -Rf /opt/couchpotato/* &>/dev/null
-            rm -Rf /opt/couchpotato/.git &>/dev/null
-            rm -Rf /opt/couchpotato/.gitignore
+        if [ -d "/opt/teamspeak3" ]; then
+            rm -Rf /opt/teamspeak3/* &>/dev/null
+            rm -Rf /opt/teamspeak3/.git &>/dev/null
+            rm -Rf /opt/teamspeak3/.gitignore
         fi
 
-        userdel -r couchpotato
+        userdel -r ts3
 
         if [ ! -d /opt ]; then
             mkdir /opt

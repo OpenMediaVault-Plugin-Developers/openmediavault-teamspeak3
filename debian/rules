@@ -2,7 +2,7 @@
 
 include ./openmediavault.mk
 
-PLUGIN_NAME=couchpotato
+PLUGIN_NAME=teamspeak3
 
 clean:
 	dh_testdir
@@ -21,7 +21,7 @@ binary-indep: install omv_clean_scm
 	dh_testroot
 	dh_installchangelogs
 	dh_installdebconf
-	dh_installinit --name=couchpotato
+	dh_installinit --name=teamspeak3
 	dh_lintian
 	dh_link
 	dh_compress
