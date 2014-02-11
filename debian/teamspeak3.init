@@ -1,14 +1,3 @@
-#First run to get password
-#!/bin/bash
-#
-./ts3server_linux_amd64 >& ./test &
-sleep 1
-TEST=$(grep 'password= ' ./test | sed -n 's/loginname= "serveradmin", password= "//p' | sed -e 's/"$//')
-echo $TEST
-pkill ts3server_linux_amd64
-rm ts3server.sqlitedb
-echo "DONE."
-
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides:          Teamspeak3
@@ -21,7 +10,7 @@ echo "DONE."
 ### END INIT INFO
 ###################################################
 #Needed software bash rsync wget grep telnet
-MODE=$(arch)
+MODE=`uname -m`
 USER="ts3"
 GROUP="ts3"
 TEAMSPEAK_DIRECTORY="/opt/teamspeak3"
@@ -29,15 +18,16 @@ proglog="${TEAMSPEAK_DIRECTORY}/ts3.log"
 progname="Teamspeak 3"
 options="inifile=ts3server.ini"
 INIT="/etc/init.d/teamspeak3.sh"
-if [ "$MODE" == "x86_64" ]; then
+
+if [ "$MODE" = "x86_64" ]; then
   progbin="ts3server_linux_amd64"
   filename="ts3server_linux_amd64"
 else
-  progbin="ts3server_linux_
-  filename="ts3server_linux_amd64"
+  progbin="ts3server_linux_x86"
+  filename="ts3server_linux_x86"
 fi
-
-
+#echo $MODE
+#echo $filename
 
 status="beta"
 distver="3.0.1"
@@ -49,7 +39,10 @@ user="serveradmin"
 passwd="DHYkFckv"
 host="127.0.0.1"
 port="10011"
-
+#if [ ! -d $TEAMSPEAK_DIRECTORY ] && [ "$1" = "stop" ]; then
+if [ ! -d $TEAMSPEAK_DIRECTORY ]; then
+    exit
+fi
 
 ##################################################
 # NO CHANGES BELOW. ELSE ITS ON YOUR OWN RISK
@@ -58,6 +51,7 @@ realbin="${TEAMSPEAK_DIRECTORY}/${progbin}"
 LIBRARYPATH="${TEAMSPEAK_DIRECTORY}"
 export LD_LIBRARY_PATH="${LIBRARYPATH}:${LD_LIBRARY_PATH}"
 # Checking if ts3 is there and executable
+
 if [ -f "${TEAMSPEAK_DIRECTORY}/${progbin}" ]; then
         if [ ! -x "${TEAMSPEAK_DIRECTORY}/${progbin}" ]; then
                 echo -e "${progbin} file is not executable"
@@ -65,33 +59,11 @@ if [ -f "${TEAMSPEAK_DIRECTORY}/${progbin}" ]; then
                 exit 2
         fi
 else
-        echo "cannot find ${progbin}!"
-        echo "If this is not correct edit the start script"
+        #echo "Stopping teamspeak3"
+        #echo "cannot find ${progbin}!"
+        #echo "If this is not correct edit the start script"
         exit 2
 fi
-
-get_current_version() {
-( echo open ${host} ${port}
-sleep 0.5
-echo login ${user} ${passwd}
-sleep 0.5
-echo use ${vserver}
-sleep 0.5
-echo serverinfo
-sleep 0.5
-echo quit ) | telnet 2> /dev/null | grep -o -E ${status}[[:digit:]]+ -o | tail -n1 | grep -o -E [[:digit:]]+
-}
-
-get_new_version() {
-# check what the latest release is
-latest=`wget -O - ${ftppath} 2> /dev/null | grep -o -E ${status}-[[:digit:]]+[[:digit:]]+ -o | tail -n1 | grep -o -E [[:digit:]]+`
-# check if there is a server release
-checksvr=`wget -O - ${ftppath}beta-${latest} 2> /dev/null | grep -o -E ${filename} -o | tail -n1`
-while [ "${checksvr}" == "" ]; do
-        latest=$[${latest} - 1]
-        checksvr=`wget -O - ${ftppath}beta-${latest} 2> /dev/null | grep -o -E ${filename} -o | tail -n1`
-done
-}
 
 get_virtual_servers() {
 ( echo open ${host} ${port}
@@ -123,6 +95,7 @@ echo quit ) | telnet 2> /dev/null |grep -e dummy
 
 case "$1" in
         start)
+        /usr/share/openmediavault/mkconf/teamspeak3
         echo -n "Starting $progname dedicated server: "
         cd ${TEAMSPEAK_DIRECTORY}
         if ps -ef |grep "${realbin}"|awk -F" " -v prog=${realbin} 'BEGIN {status=1} ; $8 == prog {status=0} ; END {exit status}' ; then
@@ -135,7 +108,7 @@ case "$1" in
                 if ${TEAMSPEAK_DIRECTORY}/${progbin} ${options} 1>> ${proglog} 2>&1 & sleep 3 ; then
                         pid=`ps -ef |grep "${realbin}"|awk -F" " -v prog=${realbin} 'BEGIN {status=1} ; $8 == prog { print $2 } ; END {exit status}'`
                         if ps h ${pid} >/dev/null; then
-                                cd /opt/ts3/JTS3ServerMod && screen -d -m -S ts3bot java -jar /opt/ts3/JTS3ServerMod/JTS3ServerMod.jar -config /opt/ts3/JTS3Serve$
+                                cd /opt/ts3/JTS3ServerMod && screen -d -m -S ts3bot java -jar /opt/ts3/JTS3ServerMod/JTS3ServerMod.jar -config /opt/ts3/JTS3ServerMod/config/JTS3ServerMod_InstanceManager.cfg
                                 echo -e ".....................STARTED"
                                 exit 0
                         else
@@ -154,7 +127,7 @@ stop)
         else
                 pid=`ps -ef |grep "${realbin}"|awk -F" " -v prog=${realbin} 'BEGIN {status=1} ; $8 == prog { print $2 } ; END {exit status}'`
                 kill -9 ${pid}
-                if ! ps -ef |grep ${TEAMSPEAK_DIRECTORY}/${progbin}|awk -F" " -v prog=${TEAMSPEAK_DIRECTORY}/${progbin} 'BEGIN {status=1} ; $8 == prog {status=0} ; END {exit status}' ; $
+                if ! ps -ef |grep ${TEAMSPEAK_DIRECTORY}/${progbin}|awk -F" " -v prog=${TEAMSPEAK_DIRECTORY}/${progbin} 'BEGIN {status=1} ; $8 == prog {status=0} ; END {exit status}' ; then
                         screen -S ts3bot -X quit|echo -e "stopped"
                         exit 0
                 else
@@ -165,8 +138,7 @@ stop)
 status)
         echo -n "`date +"%Y-%m-%d %H:%M:%S"` Checking $progname dedicated server status: "
         if ! ps -ef |grep "${realbin}"|awk -F" " -v prog=${realbin} 'BEGIN {status=1} ; $8 == prog {status=0} ; END {exit status}' ; then
-                echo -e "server not running or crashed... Restarting"
-                $0 start
+                echo -e "server not running or crashed"
         else
                 echo -e "Server still running."
         fi
@@ -221,6 +193,7 @@ case "$2" in
                         else
                                 echo "Virtual server id ${serverid} ${servername} on port ${serverport} (${serveronline}/${servermax}) ${serverstatus}"
                         fi
+
                         x=$(( ${x} + 1 ))
                 done
                 ;;
@@ -242,212 +215,3 @@ exit 1
 echo -e "finished"
 esac
 echo -e "finished2"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#!/bin/bash
-set -e
-
-# Fetch latest version from www.teamspeak.com
-TEMPFILE_1=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-TEMPFILE_2=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-TEMPFILE_3=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-wget http://www.teamspeak.com/?page=downloads -q -O - > $TEMPFILE_1
-grep -A 120 'Linux' $TEMPFILE_1 > $TEMPFILE_2
-grep -A 1 'Server' $TEMPFILE_2 > $TEMPFILE_3
-LATEST_VERSION="$(cat $TEMPFILE_3 | egrep -o  '((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}' | tail -1)"
-INSTALLED_VERSION="$(cat $(find $TEAMSPEAK_DIRECTORY -name 'ts3server*_0.log' 2> /dev/null | sort | egrep -E -v '/tmp/ts3server_backup/logs' | tail -1) | egrep -o 'TeamSpeak 3 Server ((\.)?[0-9]{1,3}){1,3}\.0-9]{1,3}' | egrep -o '((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}')"
-ARCHITECTURE="$(ls $(find $TEAMSPEAK_DIRECTORY -name 'ts3server_*_*' 2> /dev/null | grep -v 'ts3server_minimal_runscript.sh' | sort | tail -1) | egrep -o  '(amd64|x86)' | tail -1)"
-
-# Check, if MySQL-Database exists
-TEAMSPEAK_DATABASE_TYPE=$(find $TEAMSPEAK_DIRECTORY -name 'ts3db_mysql.ini' 2> /dev/null | sort | tail -1)
-if [[ "$TEAMSPEAK_DATABASE_TYPE" == "" ]]; then
-        TEAMSPEAK_DATABASE_TYPE="SQLite"
-else
-        TEAMSPEAK_DATABASE_TYPE="MySQL"
-fi
-
-# Does the INI-File 'ts3server.ini' exist?
-if [[ "$TEAMSPEAK_DATABASE_TYPE" == "MySQL" ]]; then
-        INI_FILE_NAME=$(basename $(find $TEAMSPEAK_DIRECTORY -name 'ts3server.ini' 2> /dev/null | sort | tail -1))
-else
-        INI_FILE_NAME="Unknown"
-fi
-
-# Get ServerQuery Port, if MySQL-Datebase is used
-if [[ "$TEAMSPEAK_DATABASE_TYPE" == "MySQL" ]]; then
-        TEAMSPEAK_SERVER_QUERY_PORT=$(cat $TEAMSPEAK_DIRECTORY/ts3server.ini | grep query_port | cut -d "=" -f 2)
-
-        if [[ "$TEAMSPEAK_SERVER_QUERY_PORT" == "" ]]; then
-                TEAMSPEAK_SERVER_QUERY_PORT="Unknown"
-        fi
-else
-        TEAMSPEAK_SERVER_QUERY_PORT="10011"
-fi
-
-# Is TSDNS running/used?
-TSDNS_STATUS=$(netstat -tulen | grep -i tcp | grep -E ":41144" | true)
-if [[ "$TSDNS_STATUS" != "" ]]; then
-        TSDNS_PID=$(ps opid= -C ts3server_linux_$ARCHITECTURE)
-fi
-
-
-
-
-# Check installed version against latest version
-# If latest version is not equal installed version ask the user for the update
-#if [ ! "$INSTALLED_VERSION" == "$LATEST_VERSION" ]; then
-
-
-        if [ "$3" = "--inform-online-clients" ] && [ "$4" != "" ] || [ "$2" = "--inform-online-clients" ] && [ "$3" != "" ]; then
-                if [ "$3" = "--inform-online-clients" ]; then
-                        SERVERADMIN_PASSWORD=$(cat $4)
-                else
-                        SERVERADMIN_PASSWORD=$(cat $3)
-                fi
-                (
-                        echo open localhost $TEAMSPEAK_SERVER_QUERY_PORT
-                        #sleep 2
-                        echo "login serveradmin $SERVERADMIN_PASSWORD"
-                        sleep 1
-                        echo "gm msg=The\sserver\swill\sbe\supdated\sright\snow.\sYou\swill\sbe\sunable\sto\sconnect\sto\sthe\sserver\sat\sthis\stime.\sPlease\stry\sto\sreconnect\safter\s2-5\sMinutes."
-                        sleep 1
-                        echo "logout"
-                        sleep 1
-                        echo "quit"
-                        sleep 1
-                ) | telnet 2> /dev/zero > /dev/zero || true
-        fi
-
-        # Build download link for the TeamSpeak 3 server download
-        TS3_SERVER_DOWNLOAD_LINK="http://files.teamspeak-services.com/releases/$LATEST_VERSION/teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz"
-
-        # Stop running TSDNS server, if it is running
-        if [[ "$TSDNS_STATUS" == "Running" ]]; then
-                echo -e "\nStopping running TSDNS server...\n";
-
-                kill -9 $TSDNS_PID
-        fi
-
-        # Stop running TeamSpeak 3 server
-        $INIT stop || true
-
-        # Create Backup of currently installed TeamSpeak 3 server in '/tmp/ts3server_backup'
-        echo -e "\nCreating backup of your existing TeamSpeak 3 server (including licensekey and sqlite database)...\n";
-
-        if [ ! -d /tmp/ts3server_backup ]; then
-                mkdir /tmp/ts3server_backup
-        fi
-
-        rsync -av --no-inc-recursive --exclude 'files' $TEAMSPEAK_DIRECTORY/ /tmp/ts3server_backup 2> /dev/null > /dev/null
-
-        cd $TEAMSPEAK_DIRECTORY
-
-        # Download latest TS3 Server files
-        wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
-        tar xf teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz && cp -R teamspeak3-server_linux-$ARCHITECTURE/* . && rm -rf teamspeak3-server_linux-$ARCHITECTURE/
-        if [ -f /tmp/ts3server_backup/licensekey.dat ]; then
-                mv /tmp/ts3server_backup/licensekey.dat $TEAMSPEAK_DIRECTORY
-        fi
-        cp -f /tmp/ts3server_backup/ts3server.sqlitedb $TEAMSPEAK_DIRECTORY
-        cp -f /tmp/ts3server_backup/query_ip_*.txt $TEAMSPEAK_DIRECTORY
-
-        # If Database-Type is "MySQL", import MySQL-Database and associated files
-        if [[ "$TEAMSPEAK_DATABASE_TYPE" == "MySQL" ]]; then
-                cp -f /tmp/ts3server_backup/libts3db_mysql.so $TEAMSPEAK_DIRECTORY
-                cp -f /tmp/ts3server_backup/serverkey.dat $TEAMSPEAK_DIRECTORY
-                cp -f /tmp/ts3server_backup/ts3db_mysql.ini $TEAMSPEAK_DIRECTORY
-                cp -f /tmp/ts3server_backup/ts3server.ini $TEAMSPEAK_DIRECTORY
-        fi
-
-        # If TSDNS server was running, import 'tsdns_settings.ini' file
-        if [[ "$TSDNS_STATUS" == "Running" ]]; then
-                echo -e "Your 'tsdns_settings.ini' will be imported...\n"
-
-                cp -f /tmp/ts3server_backup/tsdns/tsdns_settings.ini $TEAMSPEAK_DIRECTORY/tsdns/
-        fi
-
-        if  [ -f ts3server.pid ]; then
-                rm ts3server.pid
-        fi
-
-        # Delete downloaded TeamSpeak 3 server archive
-        rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz 2> /dev/null
-
-        # Change owner and group of files
-        chown $USER:$GROUP -R .
-
-        # Start TeamSpeak 3 server
-        if [[ "$TEAMSPEAK_DATABASE_TYPE" == "MySQL" ]]; then
-                su -c "$INIT start inifile=ts3server.ini" $USER
-        else
-                su -c "$INIT start" $USER
-        fi
-
-        # Check, if the './ts3server_startscript.sh start' command was successfull
-        if [[ $? -eq 0 ]]; then
-                sleep 5s
-                TS_SERVER_STATUS=$(su -c "$INIT status" $USER)
-                if [[ "$TS_SERVER_STATUS" == "Server is running" ]]; then
-                        if [[ "$TSDNS_STATUS" == "Running" ]]; then
-                                su -c "$TEAMSPEAK_DIRECTORY/tsdns/tsdnsserver_linux_$ARCHITECTURE &" $USER
-                                TSDNS_STATUS=""
-                                sleep 5s
-                                TSDNS_STATUS=$(netstat -tulen | grep -i tcp | grep -E ":41144")
-                                if [[ "$TSDNS_STATUS" != "" ]]; then
-                                        rm -rf /tmp/ts3server_backup 2> /dev/null
-                                fi
-                        else
-                                rm -rf /tmp/ts3server_backup 2> /dev/null
-                        fi
-                fi
-        else
-                rsync -av /tmp/ts3server_backup/ $TEAMSPEAK_DIRECTORY 2> /dev/null && rm -rf /tmp/ts3server_backup 2> /dev/null
-                if [[ "$TEAMSPEAK_DATABASE_TYPE" == "MySQL" ]]; then
-                        su -c "rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz && $INIT start inifile=ts3server.ini" $USER
-                else
-                        su -c "rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz && $INIT start" $USER
-                fi
-        fi
-
-        cd - > /dev/null
-
-rm $TEMPFILE_1 $TEMPFILE_2 $TEMPFILE_3 2> /dev/null
-exit 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

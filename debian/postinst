@@ -12,7 +12,7 @@ case "$1" in
             useradd --create-home --groups users --no-user-group --shell /usr/sbin/nologin ts3
             insserv -d teamspeak3
         else
-            echo "teamspeak3 user already exists."
+            echo "ts3 user already exists."
         fi
 
         if [ -e /var/run/teamspeak3 ]; then
@@ -27,7 +27,12 @@ case "$1" in
             echo "Initial configuration."
             object="<enable>0</enable>"
             object="${object}<password></password>"
-            object="${object}<msg></msg>"
+            object="${object}<queryport>10011</queryport>"
+            object="${object}<vsport>9987</vsport>"
+            object="${object}<fileport>30033</fileport>"
+            object="${object}<update></update>"
+            object="${object}<restartmsg></restartmsg>"
+            object="${object}<eula></eula>"
             omv_config_add_element "/config/services" "teamspeak3" "${object}" true
         fi
     ;;

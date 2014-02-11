@@ -23,16 +23,16 @@ require_once "openmediavault/error.inc";
 require_once "openmediavault/util.inc";
 require_once "openmediavault/initscript.inc";
 
-class OMVModuleCouchpotato extends OMVModuleServiceAbstract
+class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract
     implements OMVINotifyListener, OMVIModuleServiceStatus {
 
     private function getXPath()
     {
-        return "//services/couchpotato";
+        return "//services/teamspeak3";
     }
 
     public function getName() {
-        return "couchpotato";
+        return "teamspeak3";
     }
 
     public function getStatus() {
@@ -48,19 +48,10 @@ class OMVModuleCouchpotato extends OMVModuleServiceAbstract
 
         return array(
             "name"    => $this->getName(),
-            "title"   => gettext("Couchpotato"),
+            "title"   => gettext("Teamspeak3"),
             "enabled" => boolval($object["enable"]),
             "running" => $initd->status() == 0
         );
-    }
-
-    public function applyConfig()
-    {
-        $cmd = "sudo omv-mkconf " . $this->getName() . " 2>&1";
-
-        if (0 !== $this->exec($cmd, $output))
-            throw new OMVException(OMVErrorMsg::E_EXEC_FAILED,
-                $cmd, implode("\n", $output));
     }
 
     public function startService() {
@@ -79,19 +70,27 @@ class OMVModuleCouchpotato extends OMVModuleServiceAbstract
         $initd->exec();
     }
 
+    public function applyConfig() {
+        $cmd = "sudo omv-mkconf " . $this->getName() . " firstrun";
+
+        if (0 !== $this->exec($cmd, $output))
+            throw new OMVException(OMVErrorMsg::E_EXEC_FAILED,
+                $cmd, implode("\n", $output));
+    }
+
     public function stopService() {
-        $initd = new OMVSysVInitScript($this->getName());
+        $initd = new OMVSysVInitScript($this->getName(), FALSE);
         $initd->exec();
     }
 
     public function bindListeners(OMVNotifyDispatcher $dispatcher) {
         $dispatcher->addListener(
             OMV_NOTIFY_MODIFY,
-            "org.openmediavault.services.couchpotato",
+            "org.openmediavault.services.teamspeak3",
             array($this, "setDirty"));
     }
 }
 
 // Register module
 $moduleMgr = &OMVModuleMgr::getInstance();
-$moduleMgr->registerModule(new OMVModuleCouchpotato());
+$moduleMgr->registerModule(new OMVModuleTeamspeak3());
