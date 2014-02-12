@@ -189,20 +189,6 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 boxLabel   : _("Show tab containing Teamspeak3 web interface frame."),
                 checked    : false
             },{
-                xtype: "numberfield",
-                name: "portwi",
-                fieldLabel: _("Port"),
-                vtype: "port",
-                minValue: 1,
-                maxValue: 65535,
-                allowDecimals: false,
-                allowBlank: false,
-                value: 10011,
-                plugins: [{
-                    ptype: "fieldinfo",
-                    text: _("Default port: 10011")
-                }]
-            },{
                 xtype      : "combo",
                 name       : "languagewi",
                 fieldLabel : _("Language"),
@@ -228,7 +214,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 text    : _("Teamspeak3 Web Interface"),
                 scope   : this,
                 handler : function() {
-                    var link = "http://" + location.hostname + ":10011/";
+                    var link = "http://" + location.hostname + "/ts3/";
                     window.open(link, "_blank");
                 },
                 margin : "0 0 5 0"

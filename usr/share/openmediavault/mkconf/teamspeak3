@@ -12,39 +12,40 @@ options="createinifile=1"
 TEAMSPEAK3_INI="/opt/teamspeak3/ts3server.ini"
 TS3WI_CONFIG="/var/www/ts3wi/config.php"
 
-cat /dev/null > ${TEAMSPEAK3_INI}
-xmlstarlet sel -t -m "//services/teamspeak3" \
-    -o "machine_id=" -n \
-    -v "concat('default_voice_port=',vsport)" -n \
-    -o "voice_ip=0.0.0.0" -n \
-    -o "licensepath=" -n \
-    -v "concat('filetransfer_port=',fileport)" -n \
-    -o "filetransfer_ip=0.0.0.0" -n \
-    -v "concat('query_port=',vsport)" -n \
-    -o "query_ip=0.0.0.0" -n \
-    -o "query_ip_whitelist=query_ip_whitelist.txt" -n \
-    -o "query_ip_blacklist=query_ip_blacklist.txt" -n \
-    -o "dbplugin=ts3db_sqlite3" -n \
-    -o "dbpluginparameter=" -n \
-    -o "dbsqlpath=sql/" -n \
-    -o "dbsqlcreatepath=create_sqlite/" -n \
-    -o "dbconnections=10" -n \
-    -o "logpath=logs" -n \
-    -o "logquerycommands=0" -n \
-    -o "dbclientkeepdays=30" -n \
-    -o "logappend=0" -n \
-    -o "query_skipbruteforcecheck=0" -n \
-    -i "string-length(extraoptions) > 0" -v extraoptions -n \
-    ${OMV_CONFIG_FILE} | xmlstarlet unesc >> ${TEAMSPEAK3_INI}
+if [ -d $APP_PATH ]; then
+    cat /dev/null > ${TEAMSPEAK3_INI}
+    xmlstarlet sel -t -m "//services/teamspeak3" \
+        -o "machine_id=" -n \
+        -v "concat('default_voice_port=',vsport)" -n \
+        -o "voice_ip=0.0.0.0" -n \
+        -o "licensepath=" -n \
+        -v "concat('filetransfer_port=',fileport)" -n \
+        -o "filetransfer_ip=0.0.0.0" -n \
+        -v "concat('query_port=',queryport)" -n \
+        -o "query_ip=0.0.0.0" -n \
+        -o "query_ip_whitelist=query_ip_whitelist.txt" -n \
+        -o "query_ip_blacklist=query_ip_blacklist.txt" -n \
+        -o "dbplugin=ts3db_sqlite3" -n \
+        -o "dbpluginparameter=" -n \
+        -o "dbsqlpath=sql/" -n \
+        -o "dbsqlcreatepath=create_sqlite/" -n \
+        -o "dbconnections=10" -n \
+        -o "logpath=logs" -n \
+        -o "logquerycommands=0" -n \
+        -o "dbclientkeepdays=30" -n \
+        -o "logappend=0" -n \
+        -o "query_skipbruteforcecheck=0" -n \
+        -i "string-length(extraoptions) > 0" -v extraoptions -n \
+        ${OMV_CONFIG_FILE} | xmlstarlet unesc >> ${TEAMSPEAK3_INI}
 
 
 
-if [ $(omv_config_get '//services/teamspeak3/enablewi') != "0" ]; then
-    port=$(omv_config_get '//services/teamspeak3/portwi')
-    lang=$(omv_config_get '//services/teamspeak3/languagewi')
- 
-    cat <<EOF > ${TS3WI_CONFIG}
- 
+    if [ $(omv_config_get '//services/teamspeak3/enablewi') != "0" ]; then
+        port=$(omv_config_get '//services/teamspeak3/portwi')
+        lang=$(omv_config_get '//services/teamspeak3/queryport')
+
+        cat <<'EOF' > ${TS3WI_CONFIG}
+
 <?php
 /*
 *Copyright (C) 2012-2013  Psychokiller
@@ -75,9 +76,11 @@ $show_version = true;
 ?>
 EOF
 
-    a2ensite openmediavault-ts3wi
-else
-    a2dissite openmediavault-ts3wi
+        a2ensite openmediavault-ts3wi
+    else
+        a2dissite openmediavault-ts3wi
+    fi
+    service apache2 reload 
 fi
 
 get_info() {

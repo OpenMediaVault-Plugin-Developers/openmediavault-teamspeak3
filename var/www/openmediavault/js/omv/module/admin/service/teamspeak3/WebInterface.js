@@ -23,7 +23,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.WebInterface", {
 
     initComponent : function() {
         var me = this;
-        var link = "http://" + location.hostname + ":5050/";
+        var link = "http://" + location.hostname + "/ts3/";
 
         me.html = "<iframe src='" + link + "' width='100%' height='100%' />";
         me.callParent(arguments);

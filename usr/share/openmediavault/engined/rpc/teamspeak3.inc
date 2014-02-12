@@ -57,7 +57,6 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract {
         $object["showtab"]	= boolval($object["showtab"]);
         $object["update"]	= boolval($object["update"]);
         $object["enablewi"] = boolval($object["enablewi"]);
-        $object["portwi"]   = intval($object["portwi"]);
  
 
 
@@ -82,7 +81,6 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract {
                 "restartmsg" : { "type" : "string" },
                 "eula"       : { "type" : "boolean" },
                 "enablewi"   : { "type" : "boolean" },
-                "portwi"     : { "type" : "integer","minimum":1,"maximum":65535 },
                 "languagewi" : { "type" : "string" }
             }
         }');
@@ -98,7 +96,6 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract {
             "restartmsg"  => $params['restartmsg'],
             "eula"        => array_boolval($params, "eula"),
             "enablewi"    => array_boolval($params, "enablewi"),
-            "portwi"      => $params['portwi'],
             "langquagewi" => $params['languagewi']
         );
 

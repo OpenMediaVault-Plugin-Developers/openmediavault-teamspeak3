@@ -35,7 +35,6 @@ case "$1" in
             object="${object}<restartmsg></restartmsg>"
             object="${object}<eula>0</eula>"
             object="${object}<enablewi>0</enablewi>"
-            object="${object}<portwi>10011</portwi>"
             object="${object}<languagewi>en</languagewi>"
             omv_config_add_element "/config/services" "teamspeak3" "${object}" true
         fi
