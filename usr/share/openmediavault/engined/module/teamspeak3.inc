@@ -66,8 +66,13 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract
         if (!boolval($object["enable"]))
             return;
 
-        $initd = new OMVSysVInitScript($this->getName(), true);
-        $initd->exec();
+        $cmd = "sudo -u ts3 /etc/init.d/teamspeak3 start && update-rc.d teamspeak3 enable > /dev/null";
+        if (0 !== $this->exec($cmd, $output))
+            throw new OMVException(OMVErrorMsg::E_EXEC_FAILED,
+                $cmd, implode("\n", $output));
+
+        // $initd = new OMVSysVInitScript($this->getName(), true);
+        // $initd->exec();
     }
 
     public function applyConfig() {

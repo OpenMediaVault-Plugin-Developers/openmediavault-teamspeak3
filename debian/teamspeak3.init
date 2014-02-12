@@ -10,52 +10,167 @@
 ### END INIT INFO
 ###################################################
 #Needed software bash rsync wget grep telnet
-MODE=`uname -m`
-USER="ts3"
-GROUP="ts3"
-TEAMSPEAK_DIRECTORY="/opt/teamspeak3"
-proglog="${TEAMSPEAK_DIRECTORY}/ts3.log"
-progname="Teamspeak 3"
-options="inifile=ts3server.ini"
-INIT="/etc/init.d/teamspeak3.sh"
-
-if [ "$MODE" = "x86_64" ]; then
-  progbin="ts3server_linux_amd64"
-  filename="ts3server_linux_amd64"
-else
-  progbin="ts3server_linux_x86"
-  filename="ts3server_linux_x86"
-fi
-#echo $MODE
-#echo $filename
-
-status="beta"
-distver="3.0.1"
-ftppath='http://ftp.4players.de/pub/hosted/ts3/releases/'
 #
-#Settings for getting the current TS3 Version
-vserver="1"
-user="serveradmin"
-passwd="DHYkFckv"
-host="127.0.0.1"
-port="10011"
-#if [ ! -d $TEAMSPEAK_DIRECTORY ] && [ "$1" = "stop" ]; then
+TEAMSPEAK_DIRECTORY="/opt/teamspeak3"
+options="inifile=ts3server.ini"
+INIT="/etc/init.d/teamspeak3"
+
 if [ ! -d $TEAMSPEAK_DIRECTORY ]; then
     exit
 fi
+cd $TEAMSPEAK_DIRECTORY
+if [ -e ts3server_linux_x86 ]; then
+        if [ -z "`uname | grep Linux`" -o ! -z "`uname -m | grep 64`" ]; then
+                echo "Do you have the right TS3 Server package for your system? You have: `uname` `uname -m`, not Linux i386."
+        fi
+        BINARYNAME="ts3server_linux_x86"
+elif [ -e ts3server_linux_amd64 ]; then
+        if [ -z "`uname | grep Linux`" -o -z "`uname -m | grep 64`" ]; then
+                echo "Do you have the right TS3 Server package for your system? You have: `uname` `uname -m`, not Linux x86_64."
+        fi
+        BINARYNAME="ts3server_linux_amd64"
+elif [ -e ts3server_freebsd_x86 ]; then
+        if [ ! -z "`uname | grep Linux`" -o ! -z "`uname -m | grep 64`" ]; then
+                echo "Do you have the right TS3 Server package for your system? You have: `uname` `uname -m`, not FreeBSD i386."
+        fi
+        BINARYNAME="ts3server_freebsd_x86"
+elif [ -e ts3server_freebsd_amd64 ]; then
+        if [ ! -z "`uname | grep Linux`" -o -z "`uname -m | grep 64`" ]; then
+                echo "Do you have the right TS3 Server package for your system? You have: `uname` `uname -m`, not FreeBSD amd64."
+        fi
+        BINARYNAME="ts3server_freebsd_amd64"
+else
+        echo "Could not locate binary file, aborting"
+        exit 5
+fi
+
+case "$1" in
+        start)
+                if [ -e ts3server.pid ]; then
+                        if ( kill -0 $(cat ts3server.pid) 2> /dev/null ); then
+                                echo "The server is already running, try restart or stop"
+                                exit 1
+                        else
+                                echo "ts3server.pid found, but no server running. Possibly your previously started server crashed"
+                                echo "Please view the logfile for details."
+                                rm ts3server.pid
+                        fi
+                fi
+                if [ "${UID}" = "0" ]; then
+                        echo WARNING ! For security reasons we advise: DO NOT RUN THE SERVER AS ROOT
+                        c=1
+                        while [ "$c" -le 10 ]; do
+                                echo -n "!"
+                                sleep 1
+                                c=$(($c+1))
+                        done
+                        echo "!"
+                fi
+                echo "Starting the TeamSpeak 3 server"
+                if [ -e "$BINARYNAME" ]; then
+                        if [ ! -x "$BINARYNAME" ]; then
+                                echo "${BINARYNAME} is not executable, trying to set it"
+                                chmod u+x "${BINARYNAME}"
+                        fi
+                        if [ -x "$BINARYNAME" ]; then
+                                export LD_LIBRARY_PATH="${LIBRARYPATH}:${LD_LIBRARY_PATH}"
+                                "./${BINARYNAME}" ${options} > /dev/null &
+                                echo $! > ts3server.pid
+                                echo "TeamSpeak 3 server started, for details please view the log file"
+                        else
+                                echo "${BINARNAME} is not exectuable, cannot start TeamSpeak 3 server"
+                        fi
+                else
+                        echo "Could not find binary, aborting"
+                        exit 5
+                fi
+        ;;
+        stop)
+                if [ -e ts3server.pid ]; then
+                        echo -n "Stopping the TeamSpeak 3 server"
+                        if ( kill -TERM $(cat ts3server.pid) 2> /dev/null ); then
+                                c=1
+                                while [ "$c" -le 300 ]; do
+                                        if ( kill -0 $(cat ts3server.pid) 2> /dev/null ); then
+                                                echo -n "."
+                                                sleep 1
+                                        else
+                                                break
+                                        fi
+                                        c=$((++c))
+                                done
+                        fi
+                        if ( kill -0 $(cat ts3server.pid) 2> /dev/null ); then
+                                echo "Server is not shutting down cleanly - killing"
+                                kill -KILL $(cat ts3server.pid)
+                        else
+                                echo "done"
+                        fi
+                        rm ts3server.pid
+                else
+                        echo "No server running (ts3server.pid is missing)"
+                fi
+        ;;
+        restart)
+                $0 stop && $0 start || exit 1
+        ;;
+        status)
+                if [ -e ts3server.pid ]; then
+                        if ( kill -0 $(cat ts3server.pid) 2> /dev/null ); then
+                                echo "Server is running"
+                        else
+                                echo "Server seems to have died"
+                        fi
+                else
+                        echo "No server running (ts3server.pid is missing)"
+                fi
+        ;;
+        *)
+                echo "Usage: ${0} {start|stop|restart|status}"
+                exit 2
+esac
+exit 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ##################################################
 # NO CHANGES BELOW. ELSE ITS ON YOUR OWN RISK
 #
 realbin="${TEAMSPEAK_DIRECTORY}/${progbin}"
 LIBRARYPATH="${TEAMSPEAK_DIRECTORY}"
-export LD_LIBRARY_PATH="${LIBRARYPATH}:${LD_LIBRARY_PATH}"
+#su -l ts3 -c "export LD_LIBRARY_PATH='/opt/teamspeak3/'"
+export LD_LIBRARY_PATH=$LIBRARYPATH:$LD_LIBRARY_PATH
 # Checking if ts3 is there and executable
 
 if [ -f "${TEAMSPEAK_DIRECTORY}/${progbin}" ]; then
         if [ ! -x "${TEAMSPEAK_DIRECTORY}/${progbin}" ]; then
-                echo -e "${progbin} file is not executable"
-                echo -e "Please fix this and try again"
+                echo "${progbin} file is not executable"
+                echo "Please fix this and try again"
                 exit 2
         fi
 else
@@ -95,72 +210,54 @@ echo quit ) | telnet 2> /dev/null |grep -e dummy
 
 case "$1" in
         start)
-        /usr/share/openmediavault/mkconf/teamspeak3
+        #/usr/share/openmediavault/mkconf/teamspeak3
         echo -n "Starting $progname dedicated server: "
         cd ${TEAMSPEAK_DIRECTORY}
-        if ps -ef |grep "${realbin}"|awk -F" " -v prog=${realbin} 'BEGIN {status=1} ; $8 == prog {status=0} ; END {exit status}' ; then
-                echo -e "already active"
-                exit 0
-        else
-                if [ -f "${proglog}" ]; then
-                        cp ${proglog} ${proglog}.crash
-                fi
-                if ${TEAMSPEAK_DIRECTORY}/${progbin} ${options} 1>> ${proglog} 2>&1 & sleep 3 ; then
-                        pid=`ps -ef |grep "${realbin}"|awk -F" " -v prog=${realbin} 'BEGIN {status=1} ; $8 == prog { print $2 } ; END {exit status}'`
-                        if ps h ${pid} >/dev/null; then
-                                cd /opt/ts3/JTS3ServerMod && screen -d -m -S ts3bot java -jar /opt/ts3/JTS3ServerMod/JTS3ServerMod.jar -config /opt/ts3/JTS3ServerMod/config/JTS3ServerMod_InstanceManager.cfg
-                                echo -e ".....................STARTED"
-                                exit 0
-                        else
-                                echo -e "....Failed to start. Check logfile or run in debug!"
-                                exit 1
-                        fi
-                else
-                        echo -e "Failed"
-                fi
-        fi
+        "./${progbin}" ${options} > /dev/null &> /dev/null &
+        #$TEAMSPEAK_DIRECTORY/$progbin $options > /dev/null 2>&1
 ;;
 stop)
         echo -n "Stopping $progname dedicated server: "
-        if ! ps -ef |grep "${realbin}"|awk -F" " -v prog=${realbin} 'BEGIN {status=1} ; $8 == prog {status=0} ; END {exit status}' ; then
-                echo -e "server not running or crashed."
+        if ! $(ps -ef |grep $progbin| grep -v grep | awk '{print $8}')="./ts3server_linux_amd64"; then
+        #if ! ps -ef |grep $progbin|awk -F" " -v prog=${progbin} 'BEGIN {status=1} ; $8 == prog {status=0} ; END {exit status}' ; then
+                echo "server not running or crashed."
         else
-                pid=`ps -ef |grep "${realbin}"|awk -F" " -v prog=${realbin} 'BEGIN {status=1} ; $8 == prog { print $2 } ; END {exit status}'`
+                pid=`ps -ef |grep "${progbin}"|awk -F" " -v prog=${progbin} 'BEGIN {status=1} ; $8 == prog { print $2 } ; END {exit status}'`
                 kill -9 ${pid}
                 if ! ps -ef |grep ${TEAMSPEAK_DIRECTORY}/${progbin}|awk -F" " -v prog=${TEAMSPEAK_DIRECTORY}/${progbin} 'BEGIN {status=1} ; $8 == prog {status=0} ; END {exit status}' ; then
-                        screen -S ts3bot -X quit|echo -e "stopped"
+                        screen -S ts3bot -X quit|echo "stopped"
                         exit 0
                 else
-                        echo -e "unable to stop server or server crashed"
+                        echo "unable to stop server or server crashed"
                 fi
         fi
 ;;
 status)
         echo -n "`date +"%Y-%m-%d %H:%M:%S"` Checking $progname dedicated server status: "
         if ! ps -ef |grep "${realbin}"|awk -F" " -v prog=${realbin} 'BEGIN {status=1} ; $8 == prog {status=0} ; END {exit status}' ; then
-                echo -e "server not running or crashed"
+                echo "server not running or crashed"
         else
-                echo -e "Server still running."
+                echo "Server still running."
         fi
 ;;
 check)
         echo -n "Checking $progname dedicated server status: "
         if ! ps -ef |grep "${realbin}"|awk -F" " -v prog=${realbin} 'BEGIN {status=1} ; $8 == prog {status=0} ; END {exit status}' ; then
-                echo -e "offline"
+                echo "offline"
         else
-                echo -e "online"
+                echo "online"
         fi
 ;;
 update)
 ;;
 restart)
-echo -e "Restarting $progname dedicated server... "
+echo "Restarting $progname dedicated server... "
 $0 stop && $0 start
 ;;
 debug)
 echo -n "Starting debug mode for $progname dedicated server: "
 if ps -ef |grep "${realbin}"|awk -F" " -v prog=${realbin} 'BEGIN {status=1} ; $8 == prog {status=0} ; END {exit status}' ; then
-        echo -e "already active"
+        echo "already active"
         exit 3
 else
         echo "--DEBUG will appear on screen!"
@@ -168,50 +265,7 @@ else
         ${TEAMSPEAK_DIRECTORY}/${progbin} ${options}
 fi
 ;;
-manage)
-case "$2" in
-        list)
-                echo -e "Retrieving virtual servers"
-                vservers=$(get_virtual_servers)
-                x=1
-                while true
-                do
-                        split=`echo ${vservers} | cut -d \| -f ${x}`
-                        if [ "${split}" == "" ]; then
-                                break
-                        fi
-                        serverid=`echo ${split} | cut -d " " -f 1 | cut -d = -f 2`
-                        serverport=`echo ${split} | cut -d " " -f 2 | cut -d = -f 2`
-                        servermax=`echo ${split} | cut -d " " -f 6 | cut -d = -f 2`
-                        serveronline=`echo ${split} | cut -d " " -f 4 | cut -d = -f 2`
-                        serverstatus=`echo ${split} | cut -d " " -f 3 | cut -d = -f 2`
-                        servername=`echo ${split} | cut -d " " -f 8 | cut -d = -f 2`
-                        servername=`echo ${servername} |  awk '{ gsub(/\\\s/, " "); print }'`
-                        if [ "${serverstatus}" == "none" ]; then
-                                servername=`echo ${split} | cut -d " " -f 4 | cut -d = -f 2`
-                                echo "Virtual server id ${serverid} ${servername} on port ${serverport} is offline"
-                        else
-                                echo "Virtual server id ${serverid} ${servername} on port ${serverport} (${serveronline}/${servermax}) ${serverstatus}"
-                        fi
-
-                        x=$(( ${x} + 1 ))
-                done
-                ;;
-                stop)
-                        echo -e "Attempting to shutdown virtual server $3."
-                        stop_virtual_server ${3}
-                ;;
-                start)
-                        echo -e "Attempting to start virtual server $3."
-                        start_virtual_server ${3}
-                ;;
-                *)
-                        echo "Possible commands: $0 manage {list|stop|start}"
-        esac
-;;
 *)
 echo "Usage: $0 {start|stop|restart|status|check|debug|update|manage}"
-exit 1
-echo -e "finished"
 esac
-echo -e "finished2"
+

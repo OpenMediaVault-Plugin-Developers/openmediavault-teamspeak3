@@ -53,11 +53,9 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract {
         if(is_null($object))
             throw new OMVException(OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED, "//services/teamspeak3");
 
-        $object["enable"]   = boolval($object["enable"]);
-        $object["showtab"]  = boolval($object["showtab"]);
-        $object["update"]   = boolval($object["update"]);
-        $object["enablewi"] = boolval($object["enablewi"]);
-        $object["portwi"]   = intval($object["portwi"]);
+        $object["enable"]	= boolval($object["enable"]);
+        $object["showtab"]	= boolval($object["showtab"]);
+        $object["update"]	= boolval($object["update"]);
 
         return $object;
     }
@@ -70,34 +68,28 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract {
         $this->validateMethodParams($params, '{
             "type"       : "object",
             "properties" : {
-                "enable"     : { "type" : "boolean" },
-                "showtab"    : { "type" : "boolean" },
-                "update"     : { "type" : "boolean" },
-                "password"   : { "type" : "string" },
-                "queryport"  : { "type" : "integer","minimum":1,"maximum":65535 },
-                "vsport"     : { "type" : "integer","minimum":1,"maximum":65535 },
-                "fileport"   : { "type" : "integer","minimum":1,"maximum":65535 },
-                "restartmsg" : { "type" : "string" },
-                "eula"       : { "type" : "boolean" },
-                "enablewi"   : { "type" : "boolean" },
-                "portwi"     : { "type" : "integer","minimum":1,"maximum":65535 },
-                "languagewi" : { "type" : "string" }
+                "enable"  	: { "type" : "boolean" },
+                "showtab" 	: { "type" : "boolean" },
+                "update"  	: { "type" : "boolean" },
+                "password"	: { "type" : "string" },
+                "queryport"  	: { "type" : "integer","minimum":1,"maximum":65535 },
+                "vsport"        : { "type" : "integer","minimum":1,"maximum":65535 },
+                "fileport"	: { "type" : "integer","minimum":1,"maximum":65535 },
+                "restartmsg"	: { "type" : "string" },
+                "eula"		: { "type" : "boolean" }
             }
         }');
 
         $object = array(
-            "enable"      => array_boolval($params, "enable"),
-            "showtab"     => array_boolval($params, "showtab"),
-            "update"      => array_boolval($params, 'update'),
-            "password"    => $params['password'],
-            "queryport"   => $params['queryport'],
-            "vsport"      => $params['vsport'],
-            "fileport"    => $params['fileport'],
-            "restartmsg"  => $params['restartmsg'],
-            "eula"        => array_boolval($params, "eula"),
-            "enablewi"    => array_boolval($params, "enablewi"),
-            "portwi"      => $params['portwi'],
-            "langquagewi" => $params['languagewi']
+            "enable"		=> array_boolval($params, "enable"),
+            "showtab"		=> array_boolval($params, "showtab"),
+            "update"		=> array_boolval($params, 'update'),
+            "password"		=> $params['password'],
+            "queryport"		=> $params['queryport'],
+            "vsport"		=> $params['vsport'],
+            "fileport"		=> $params['fileport'],
+            "restartmsg"	=> $params['restartmsg'],
+            "eula"		=> array_boolval($params, "eula")
         );
 
         if(false === $xmlConfig->replace($this->getXPath(), $object))
@@ -128,3 +120,4 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract {
 // Register the RPC service.
 $rpcServiceMgr = &OMVRpcServiceMgr::getInstance();
 $rpcServiceMgr->registerService(new OMVRpcServiceTeamspeak3());
+
