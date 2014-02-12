@@ -38,6 +38,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
         correlations : [{
             name       : [
                 "main",
+                "webui",
             ],
             conditions : [
                 { name  : "eula", value : false }
@@ -111,12 +112,6 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                     text: _("By clicking Enable you are agreeing to Teamspeaks <a href='http://www.teamspeak.com/?page=eula' target='_blank'>EULA</a>"),
                 }]
             },{
-                xtype      : "checkbox",
-                name       : "showtab",
-                fieldLabel : _("Show Tab"),
-                boxLabel   : _("Show tab containing Teamspeak3 web interface frame."),
-                checked    : false
-            },{
                 xtype: "passwordfield",
                 name: "password",
                 fieldLabel: _("ServerQuery Admin Password"),
@@ -173,13 +168,67 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                         ptype: "fieldinfo",
                         text: _("Default port: 30033")
                     }]
+            }]
+        },{
+            xtype	: "fieldset",
+            title	: "Web Interface Settings",
+			name	: "webui",
+            defaults : {
+                labelSeparator : ""
+            },
+            items : [{
+                xtype      : "checkbox",
+                name       : "enablewi",
+                fieldLabel : _("Enable"),
+                checked    : false,
+                boxLabel   : _("Enable the web interface")
+            },{
+                xtype      : "checkbox",
+                name       : "showtab",
+                fieldLabel : _("Show Tab"),
+                boxLabel   : _("Show tab containing Teamspeak3 web interface frame."),
+                checked    : false
+            },{
+                xtype: "numberfield",
+                name: "portwi",
+                fieldLabel: _("Port"),
+                vtype: "port",
+                minValue: 1,
+                maxValue: 65535,
+                allowDecimals: false,
+                allowBlank: false,
+                value: 10011,
+                plugins: [{
+                    ptype: "fieldinfo",
+                    text: _("Default port: 10011")
+                }]
+            },{
+                xtype      : "combo",
+                name       : "languagewi",
+                fieldLabel : _("Language"),
+                mode       : "local",
+                store      : new Ext.data.SimpleStore({
+                    fields  : [ "value", "text" ],
+                    data    : [
+                        [ "de", _("German") ],
+                        [ "en", _("English") ],
+                        [ "nl", _("Netherlandish") ],
+                        [ "fr", _("French") ]
+                    ]
+                }),
+                displayField  : "text",
+                valueField    : "value",
+                allowBlank    : false,
+                editable      : false,
+                triggerAction : "all",
+                value         : "en"
             },{
                 xtype   : "button",
                 name    : "openteamspeak3",
                 text    : _("Teamspeak3 Web Interface"),
                 scope   : this,
                 handler : function() {
-                    var link = "http://" + location.hostname + ":5050/";
+                    var link = "http://" + location.hostname + ":10011/";
                     window.open(link, "_blank");
                 },
                 margin : "0 0 5 0"

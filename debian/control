@@ -8,5 +8,9 @@ Standards-Version: 3.9.3
 Package: openmediavault-teamspeak3
 Architecture: all
 Depends: ${misc:Depends}, openmediavault (>= 0.5.34)
+telnet, rsync
 Description: OpenMediaVault TeamSpeak 3 plugin
- Communication system.
+ TeamSpeak is software for quality voice communication via the Internet. 
+ The software is free of charge to non-profit entities.
+ 
+

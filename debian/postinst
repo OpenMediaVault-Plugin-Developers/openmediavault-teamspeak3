@@ -15,10 +15,11 @@ case "$1" in
             echo "ts3 user already exists."
         fi
 
-        if [ -e /var/run/teamspeak3 ]; then
-            echo "Cleaning old pid file..."
-            rm -Rf /var/run/teamspeak3
-        fi
+        # DO WE NEED THIS
+        #if [ -e /opt/teamspeak3/ts3server.pid ]; then
+        #    echo "Cleaning old pid file..."
+        #    rm -Rf /opt/teamspeak3/ts3server.pid
+        #fi
 
         chmod 775 /opt
         chown root:users /opt
@@ -32,7 +33,7 @@ case "$1" in
             object="${object}<fileport>30033</fileport>"
             object="${object}<update></update>"
             object="${object}<restartmsg></restartmsg>"
-            object="${object}<eula></eula>"
+            object="${object}<eula>0</eula>"
             object="${object}<enablewi>0</enablewi>"
             object="${object}<portwi>10011</portwi>"
             object="${object}<languagewi>en</languagewi>"

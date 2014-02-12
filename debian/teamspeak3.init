@@ -9,7 +9,7 @@
 # Description:       Start Teamspeak.
 ### END INIT INFO
 ###################################################
-#Needed software bash rsync wget grep telnet
+#
 #
 TEAMSPEAK_DIRECTORY="/opt/teamspeak3"
 options="inifile=ts3server.ini"

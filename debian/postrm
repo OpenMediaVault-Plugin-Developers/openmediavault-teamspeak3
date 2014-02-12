@@ -9,13 +9,12 @@ case "$1" in
     purge)
         rm -Rf /opt/teamspeak3 & >/dev/null
 
-        if [ -f "/var/run/teamspeak3/teamspeak3.pid" ]; then
-            PID=$(cat /var/run/teamspeak3/teamspeak3.pid);
+        if [ -f "/opt/teamspeak3/ts3server.pid" ]; then
+            PID=$(cat /var/run/teamspeak3/ts3server.pid);
             kill -0 $PID 2>/dev/null;
 
             if [ $? -eq 0 ]; then
                 kill -9 $PID;
-                rm -Rf /var/run/teamspeak3
             fi
         fi
 
@@ -23,8 +22,6 @@ case "$1" in
 
         if [ -d "/opt/teamspeak3" ]; then
             rm -Rf /opt/teamspeak3/* &>/dev/null
-            rm -Rf /opt/teamspeak3/.git &>/dev/null
-            rm -Rf /opt/teamspeak3/.gitignore
         fi
 
         userdel -r ts3

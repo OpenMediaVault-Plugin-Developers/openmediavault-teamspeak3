@@ -10,6 +10,7 @@ USER="ts3"
 INIT="/etc/init.d/teamspeak3"
 options="createinifile=1"
 TEAMSPEAK3_INI="/opt/teamspeak3/ts3server.ini"
+TS3WI_CONFIG="/var/www/ts3wi/config.php"
 
 cat /dev/null > ${TEAMSPEAK3_INI}
 xmlstarlet sel -t -m "//services/teamspeak3" \
@@ -38,20 +39,46 @@ xmlstarlet sel -t -m "//services/teamspeak3" \
 
 
 
+if [ $(omv_config_get '//services/teamspeak3/enablewi') != "0" ]; then
+    port=$(omv_config_get '//services/teamspeak3/portwi')
+    lang=$(omv_config_get '//services/teamspeak3/languagewi')
+ 
+    cat <<EOF > ${TS3WI_CONFIG}
+ 
+<?php
+/*
+*Copyright (C) 2012-2013  Psychokiller
+*
+*This program is free software; you can redistribute it and/or modify it under the terms of
+*the GNU General Public License as published by the Free Software Foundation; either
+*version 3 of the License, or any later version.
+*
+*This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+*without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+*See the GNU General Public License for more details.
+*
+*You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
+*/
+if(!defined("SECURECHECK")) {die($lang['error_file_alone']);}
 
+$server[0]['alias']= "TS3 Server";
+$server[0]['ip']= "127.0.0.1";
+$server[0]['tport']= ${port};
+$cfglang = ${lang};
+$duration = "100";
+$fastswitch = true;
+$showicons = "left";
+$style = "new";
+$msgsend_name = "Webinterface";
+$show_motd = true;
+$show_version = true;
+?>
+EOF
 
-
-
-
-
-
-
-
-
-
-
-
-
+    a2ensite openmediavault-ts3wi
+else
+    a2dissite openmediavault-ts3wi
+fi
 
 get_info() {
     cd /tmp
@@ -119,6 +146,8 @@ eula() {
     xmlstarlet ed -L -u "//services/teamspeak3/eula" -v "1" -n ${OMV_CONFIG_FILE}
     chown ts3:users /opt/teamspeak3 -R
     chmod 775 /opt/teamspeak3 -R
+    chmod 775 /var/www/ts3wi/icons /var/www/ts3wi/temp /var/www/templates_c
+    chmod -R 775 /var/www/ts3wi/site/backups
 }
 
 update() {
