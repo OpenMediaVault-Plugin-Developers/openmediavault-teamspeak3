@@ -44,7 +44,7 @@ if [ -d $APP_PATH ]; then
         port=$(omv_config_get '//services/teamspeak3/portwi')
         lang=$(omv_config_get '//services/teamspeak3/queryport')
 
-        cat <<'EOF' > ${TS3WI_CONFIG}
+        cat <<EOF > ${TS3WI_CONFIG}
 
 <?php
 /*
@@ -60,19 +60,19 @@ if [ -d $APP_PATH ]; then
 *
 *You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
-if(!defined("SECURECHECK")) {die($lang['error_file_alone']);}
+if(!defined("SECURECHECK")) {die(\$lang['error_file_alone']);}
 
-$server[0]['alias']= "TS3 Server";
-$server[0]['ip']= "127.0.0.1";
-$server[0]['tport']= ${port};
-$cfglang = ${lang};
-$duration = "100";
-$fastswitch = true;
-$showicons = "left";
-$style = "new";
-$msgsend_name = "Webinterface";
-$show_motd = true;
-$show_version = true;
+\$server[0]['alias']= "TS3 Server";
+\$server[0]['ip']= "127.0.0.1";
+\$server[0]['tport']= ${port};
+\$cfglang = ${lang};
+\$duration = "100";
+\$fastswitch = true;
+\$showicons = "left";
+\$style = "new";
+\$msgsend_name = "Webinterface";
+\$show_motd = true;
+\$show_version = true;
 ?>
 EOF
 
