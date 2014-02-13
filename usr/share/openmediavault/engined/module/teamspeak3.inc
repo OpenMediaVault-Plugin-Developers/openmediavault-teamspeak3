@@ -73,7 +73,7 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract
     }
 
     public function applyConfig() {
-        $cmd = "sudo omv-mkconf teamspeak3 firstrun";
+        $cmd = "sudo omv-mkconf teamspeak3 setsettings";
 
         if (0 !== $this->exec($cmd, $output))
             throw new OMVException(OMVErrorMsg::E_EXEC_FAILED,
