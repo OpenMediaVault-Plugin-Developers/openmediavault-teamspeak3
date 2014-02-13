@@ -70,13 +70,10 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract
         if (0 !== $this->exec($cmd, $output))
             throw new OMVException(OMVErrorMsg::E_EXEC_FAILED,
                 $cmd, implode("\n", $output));
-
-        // $initd = new OMVSysVInitScript($this->getName(), true);
-        // $initd->exec();
     }
 
     public function applyConfig() {
-        $cmd = "sudo omv-mkconf " . $this->getName() . " firstrun";
+        $cmd = "sudo omv-mkconf " . $this->getName();
 
         if (0 !== $this->exec($cmd, $output))
             throw new OMVException(OMVErrorMsg::E_EXEC_FAILED,
