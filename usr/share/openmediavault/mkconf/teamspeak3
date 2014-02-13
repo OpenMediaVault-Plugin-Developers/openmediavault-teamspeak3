@@ -198,30 +198,30 @@ update() {
         mkdir /tmp/ts3server_backup
     fi
 
-    rsync -av --no-inc-recursive --exclude 'files' $TEAMSPEAK_DIRECTORY/ /tmp/ts3server_backup 2> /dev/null > /dev/null
+    rsync -av --no-inc-recursive --exclude 'files' $APP_PATH/ /tmp/ts3server_backup 2> /dev/null > /dev/null
 
-    cd $TEAMSPEAK_DIRECTORY
+    cd $APP_PATH
 
     # Download latest TS3 Server files
     wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
     tar xf teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz && cp -R teamspeak3-server_linux-$ARCHITECTURE/* . && rm -rf teamspeak3-server_linux-$ARCHITECTURE/
     if [ -f /tmp/ts3server_backup/licensekey.dat ]; then
-        mv /tmp/ts3server_backup/licensekey.dat $TEAMSPEAK_DIRECTORY
+        mv /tmp/ts3server_backup/licensekey.dat $APP_PATH
     fi
-    cp -f /tmp/ts3server_backup/ts3server.sqlitedb $TEAMSPEAK_DIRECTORY
-    cp -f /tmp/ts3server_backup/query_ip_*.txt $TEAMSPEAK_DIRECTORY
+    cp -f /tmp/ts3server_backup/ts3server.sqlitedb $APP_PATH
+    cp -f /tmp/ts3server_backup/query_ip_*.txt $APP_PATH
 
     # If Database-Type is "MySQL", import MySQL-Database and associated files
     if [[ "$TEAMSPEAK_DATABASE_TYPE" == "MySQL" ]]; then
-        cp -f /tmp/ts3server_backup/libts3db_mysql.so $TEAMSPEAK_DIRECTORY
-        cp -f /tmp/ts3server_backup/serverkey.dat $TEAMSPEAK_DIRECTORY
-        cp -f /tmp/ts3server_backup/ts3db_mysql.ini $TEAMSPEAK_DIRECTORY
-        cp -f /tmp/ts3server_backup/ts3server.ini $TEAMSPEAK_DIRECTORY
+        cp -f /tmp/ts3server_backup/libts3db_mysql.so $APP_PATH
+        cp -f /tmp/ts3server_backup/serverkey.dat $APP_PATH
+        cp -f /tmp/ts3server_backup/ts3db_mysql.ini $APP_PATH
+        cp -f /tmp/ts3server_backup/ts3server.ini $APP_PATH
     fi
 
     # If TSDNS server was running, import 'tsdns_settings.ini' file
     if [[ "$TSDNS_STATUS" == "Running" ]]; then
-        cp -f /tmp/ts3server_backup/tsdns/tsdns_settings.ini $TEAMSPEAK_DIRECTORY/tsdns/
+        cp -f /tmp/ts3server_backup/tsdns/tsdns_settings.ini $APP_PATH/tsdns/
     fi
 
     if  [ -f ts3server.pid ]; then
@@ -235,15 +235,17 @@ update() {
     chown $USER:$GROUP -R .
 
     # Start TeamSpeak 3 server
-    su -c "$INIT start inifile=ts3server.ini" $USER
+    sudo -u $USER /$INIT start 2> /dev/null
+    #sudo -u $USER ./ts3server_minimal_runscript.sh $options &
+    #su -c "$INIT start inifile=ts3server.ini" $USER
 
     # Check, if the server start was successfull
     if [[ $? -eq 0 ]]; then
         sleep 5s
-        TS_SERVER_STATUS=$(su -c "$INIT status" $USER)
+        TS_SERVER_STATUS=$($INIT status)
         if [[ "$TS_SERVER_STATUS" == "Server is running" ]]; then
             if [[ "$TSDNS_STATUS" == "Running" ]]; then
-                su -c "$TEAMSPEAK_DIRECTORY/tsdns/tsdnsserver_linux_$ARCHITECTURE &" $USER
+                sudo -u $USER ./tsdns/tsdnsserver_linux_$ARCHITECTURE &
                 TSDNS_STATUS=""
                 sleep 5s
                 TSDNS_STATUS=$(netstat -tulen | grep -i tcp | grep -E ":41144")
@@ -255,7 +257,7 @@ update() {
             fi
         fi
     else
-        rsync -av /tmp/ts3server_backup/ $TEAMSPEAK_DIRECTORY 2> /dev/null && rm -rf /tmp/ts3server_backup 2> /dev/null
+        rsync -av /tmp/ts3server_backup/ $APP_PATH 2> /dev/null && rm -rf /tmp/ts3server_backup 2> /dev/null
         if [[ "$TEAMSPEAK_DATABASE_TYPE" == "MySQL" ]]; then
             su -c "rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz && $INIT start inifile=ts3server.ini" $USER
         else
@@ -270,7 +272,7 @@ getsettings() {
     echo "getting settings"
     get_info;
     echo "got settings"
-    INSTALLED_VERSION="$(cat $(find $TEAMSPEAK_DIRECTORY -name 'ts3server*_0.log' 2> /dev/null | sort | egrep -E -v '/tmp/ts3server_backup/logs' | tail -1) | egrep -o 'TeamSpeak 3 Server ((\.)?[0-9]{1,3}){1,3}\.0-9]{1,3}' | egrep -o '((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}')"
+    INSTALLED_VERSION="$(cat $(find $APP_PATH -name 'ts3server*_0.log' | sort | egrep -E -v '/tmp/ts3server_backup/logs' | egrep -E -v '/tmp/ts3server_backup/logs' | tail -1) | egrep -o 'TeamSpeak 3 Server ((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}' | egrep -o '((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}')"
     #INSTALLED_VERSION=0.7.00 #use to test if button shows if values do not match
     if [ "$INSTALLED_VERSION" == "$LATEST_VERSION" ]; then
         xmlstarlet ed -L -u "//services/teamspeak3/update" -v "0" -n ${OMV_CONFIG_FILE}
