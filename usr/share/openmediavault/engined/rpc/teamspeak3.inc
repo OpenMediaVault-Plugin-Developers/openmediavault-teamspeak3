@@ -72,7 +72,7 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract {
         $this->validateMethodParams($params, '{
             "type"       : "object",
             "properties" : {
-                "enable"  	: { "type" : "boolean" },
+                "enable"     : { "type" : "boolean" },
                 "showtab"    : { "type" : "boolean" },
                 "update"     : { "type" : "boolean" },
                 "password"   : { "type" : "string" },
