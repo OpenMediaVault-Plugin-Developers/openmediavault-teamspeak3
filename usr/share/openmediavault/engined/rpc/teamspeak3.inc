@@ -43,6 +43,7 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract {
     }
 
     function getSettings($params, $context) {
+        $this->exec("omv-mkconf teamspeak3 getsettings 2>&1");
         global $xmlConfig;
 
         $this->validateMethodContext($context, array(
