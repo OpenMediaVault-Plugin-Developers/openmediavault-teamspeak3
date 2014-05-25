@@ -13,27 +13,7 @@ options="createinifile=1"
 TEAMSPEAK3_INI="/opt/teamspeak3/ts3server.ini"
 TS3WI_CONFIG="/var/www/ts3wi/config.php"
 
-get_info() {
-    cd /tmp
-    # Fetch latest version from www.teamspeak.com
-    TEMPFILE_1=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-    TEMPFILE_2=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-    TEMPFILE_3=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-    wget http://www.teamspeak.com/?page=downloads -q -O - > $TEMPFILE_1
-    grep -A 120 'Linux' $TEMPFILE_1 > $TEMPFILE_2
-    grep -A 1 'Server' $TEMPFILE_2 > $TEMPFILE_3
-    LATEST_VERSION="$(cat $TEMPFILE_3 | egrep -o  '((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}' | tail -1)"
-    MODE=$(arch)
-    if [ "$MODE" == "x86_64" ]; then
-        ARCHITECTURE="amd64"
-    else
-        ARCHITECTURE="x86"
-    fi
-    TS3_SERVER_DOWNLOAD_LINK="http://files.teamspeak-services.com/releases/$LATEST_VERSION/teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz"
-    rm $TEMPFILE_1 $TEMPFILE_2 $TEMPFILE_3 2> /dev/null
-}
-
-set_settings() {
+if [ ! "$2" == "getsettings" || ! "$2" == "update" ]; then
     if [ -d $APP_PATH ]; then
         cat /dev/null > ${TEAMSPEAK3_INI}
             xmlstarlet sel -t -m "//services/teamspeak3" \
@@ -52,7 +32,6 @@ set_settings() {
             -o "dbsqlpath=sql/" -n \
             -o "dbsqlcreatepath=create_sqlite/" -n \
             -o "dbconnections=10" -n \
-            -o "virtualserver_autostart=1" -n \
             -o "logpath=logs" -n \
             -o "logquerycommands=0" -n \
             -o "dbclientkeepdays=30" -n \
@@ -60,6 +39,8 @@ set_settings() {
             -o "query_skipbruteforcecheck=0" -n \
             -i "string-length(extraoptions) > 0" -v extraoptions -n \
             ${OMV_CONFIG_FILE} | xmlstarlet unesc >> ${TEAMSPEAK3_INI}
+
+
 
         if [ $(omv_config_get '//services/teamspeak3/enablewi') != "0" ]; then
             port=$(omv_config_get '//services/teamspeak3/queryport')
@@ -103,6 +84,50 @@ EOF
         fi
         service apache2 reload
     fi
+fi
+
+get_info() {
+    cd /tmp
+    # Fetch latest version from www.teamspeak.com
+    TEMPFILE_1=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
+    TEMPFILE_2=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
+    TEMPFILE_3=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
+    wget http://www.teamspeak.com/?page=downloads -q -O - > $TEMPFILE_1
+    grep -A 120 'Linux' $TEMPFILE_1 > $TEMPFILE_2
+    grep -A 1 'Server' $TEMPFILE_2 > $TEMPFILE_3
+    LATEST_VERSION="$(cat $TEMPFILE_3 | egrep -o  '((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}' | tail -1)"
+    MODE=$(arch)
+    if [ "$MODE" == "x86_64" ]; then
+        ARCHITECTURE="amd64"
+    else
+        ARCHITECTURE="x86"
+    fi
+    TS3_SERVER_DOWNLOAD_LINK="http://files.teamspeak-services.com/releases/$LATEST_VERSION/teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz"
+    rm $TEMPFILE_1 $TEMPFILE_2 $TEMPFILE_3 2> /dev/null
+}
+
+first_run() {
+if [ ! -d "$APP_PATH" ]; then
+    if [ $(omv_config_get '//services/teamspeak3/enable') != "1" ]; then
+        exit 0
+    fi
+    get_info;
+    cd /opt
+    wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
+    tar zxf teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
+    mv teamspeak3-server_linux-$ARCHITECTURE teamspeak3
+    rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
+    chown $USER:$USER $APP_PATH -R
+    chmod 777 $APP_PATH -R
+    cd $APP_PATH
+    #./ts3server_minimal_runscript.sh >& details &
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APP_PATH;export LD_LIBRARY_PATH
+    sudo -u ./ts3server_minimal_runscript.sh >& details &
+    sleep 1
+    TEST=$(grep 'password= ' ${APP_PATH}/details | sed -n 's/loginname= "serveradmin", password= "//p' | sed -e 's/"$//')
+    pkill ts3server_linux_$ARCHITECTURE
+    xmlstarlet ed -L -u "//services/teamspeak3/password" -v $TEST -n ${OMV_CONFIG_FILE}
+fi
 }
 
 eula() {
@@ -263,8 +288,8 @@ case "$2" in
   getsettings)
     getsettings
     ;;
-  setsettings)
-    set_settings
+  firstrun)
+    first_run
     ;;
   eula)
     eula
@@ -272,4 +297,3 @@ case "$2" in
   *)
     exit 1
 esac
-
