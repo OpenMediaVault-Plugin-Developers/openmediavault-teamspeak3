@@ -17,74 +17,101 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once "openmediavault/object.inc";
 require_once "openmediavault/config.inc";
 require_once "openmediavault/error.inc";
-require_once "openmediavault/util.inc";
-require_once "openmediavault/rpcservice.inc";
 require_once "openmediavault/notify.inc";
+require_once "openmediavault/object.inc";
+require_once "openmediavault/product.inc";
+require_once "openmediavault/rpcservice.inc";
+require_once "openmediavault/system.inc";
+require_once "openmediavault/util.inc";
 
-class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract {
+class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
+{
+    private function getPluginName()
+    {
+        return strtolower($this->getName());
+    }
+
+    private function getEventMessagePath()
+    {
+        return sprintf("org.openmediavault.service.%s", $this->getPluginName());
+    }
 
     private function getXPath()
     {
-        return "//services/teamspeak3";
+        return sprintf("//services/%s", $this->getPluginName());
     }
 
-    public function getName() {
+    public function getName()
+    {
         return "Teamspeak3";
     }
 
-    public function initialize() {
+    public function initialize()
+    {
         $this->registerMethod("getSettings");
         $this->registerMethod("setSettings");
         $this->registerMethod('doUpdateTS3');
         $this->registerMethod('doUpdateEULA');
     }
 
-    function getSettings($params, $context) {
-        $this->exec("omv-mkconf teamspeak3 getsettings 2>&1");
+    function getSettings($params, $context)
+    {
+        $this->exec("omv-mkconf "
+             . $this->getPluginName()
+             . " getsettings 2>&1");
+        
         global $xmlConfig;
 
         $this->validateMethodContext($context, array(
-            "role" => OMV_ROLE_ADMINISTRATOR ));
+            "role" => OMV_ROLE_ADMINISTRATOR
+        ));
 
         $object = $xmlConfig->get($this->getXPath());
 
-        if(is_null($object))
-            throw new OMVException(OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED, "//services/teamspeak3");
+        if (is_null($object)) {
+            throw new OMVException(
+                OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
+                $XPath
+            );
+        }
 
         $object["enable"]	= boolval($object["enable"]);
         $object["showtab"]	= boolval($object["showtab"]);
         $object["update"]	= boolval($object["update"]);
         $object["enablewi"] = boolval($object["enablewi"]);
- 
-
 
         return $object;
     }
 
-    function setSettings($params, $context) {
+    function setSettings($params, $context)
+    {
         global $xmlConfig;
 
-        $this->validateMethodContext($context, array("role" => OMV_ROLE_ADMINISTRATOR));
+        $this->validateMethodContext($context, array(
+            "role" => OMV_ROLE_ADMINISTRATOR
+        ));
 
-        $this->validateMethodParams($params, '{
-            "type"       : "object",
-            "properties" : {
-                "enable"     : { "type" : "boolean" },
-                "showtab"    : { "type" : "boolean" },
-                "update"     : { "type" : "boolean" },
-                "password"   : { "type" : "string" },
-                "queryport"  : { "type" : "integer","minimum":1,"maximum":65535 },
-                "vsport"     : { "type" : "integer","minimum":1,"maximum":65535 },
-                "fileport"   : { "type" : "integer","minimum":1,"maximum":65535 },
-                "restartmsg" : { "type" : "string" },
-                "eula"       : { "type" : "boolean" },
-                "enablewi"   : { "type" : "boolean" },
-                "languagewi" : { "type" : "string" }
-            }
-        }');
+        $this->validateMethodParams(
+            $params,
+            '{
+                "type"       : "object",
+                "properties" : {
+                    "enable"    : { "type" : "boolean" },
+                    "showtab"    : { "type" : "boolean" },
+                    "update"     : { "type" : "boolean" },
+                    "password"   : { "type" : "string" },
+                    "queryport"  : { "type" : "integer","minimum":1,"maximum":65535 },
+                    "vsport"     : { "type" : "integer","minimum":1,"maximum":65535 },
+                    "fileport"   : { "type" : "integer","minimum":1,"maximum":65535 },
+                    "restartmsg" : { "type" : "string" },
+                    "eula"       : { "type" : "boolean" },
+                    "enablewi"   : { "type" : "boolean" },
+                    "languagewi" : { "type" : "string" }
+                }
+            }'
+        );
 
         $object = array(
             "enable"      => array_boolval($params, "enable"),
@@ -100,28 +127,52 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract {
             "langquagewi" => $params['languagewi']
         );
 
-        if(false === $xmlConfig->replace($this->getXPath(), $object))
-            throw new OMVException(OMVErrorMsg::E_CONFIG_SET_OBJECT_FAILED, $this->getXPath());
+        if (false === $xmlConfig->replace($this->getXPath(), $object)) {
+            throw new OMVException(
+                OMVErrorMsg::E_CONFIG_SET_OBJECT_FAILED,
+                $this->getXPath()
+            );
+        }
 
         $dispatcher = &OMVNotifyDispatcher::getInstance();
-        $dispatcher->notify(OMV_NOTIFY_MODIFY, "org.openmediavault.services.teamspeak3", $object);
+        $dispatcher->notify(
+            OMV_NOTIFY_MODIFY,
+            $this->getEventMessagePath(),
+            $object
+        );
+
         return $object;
     }
 
-    public function doUpdateTS3($params, $context) {
-        $cmd = "omv-mkconf teamspeak3 update 2>&1";
-        if(0 !== $this->exec($cmd, $output))
+    public function doUpdateTS3($params, $context)
+    {
+        sprintf("omv-mkconf %s update 2>&1", $this->getPluginName());
+
+        if(0 !== $this->exec($cmd, $output)) {
            throw new OMVException(OMVErrorMsg::E_EXEC_FAILED, $cmd, implode("\n", $output));
+        }
+
         $dispatcher = &OMVNotifyDispatcher::getInstance();
-        $dispatcher->notify(OMV_NOTIFY_MODIFY, "org.openmediavault.services.teamspeak3", $object);
+        $dispatcher->notify(
+            OMV_NOTIFY_MODIFY,
+            $this->getEventMessagePath(),
+            $object
+        );
     }
 
     public function doUpdateEULA($params, $context) {
-        $cmd = "omv-mkconf teamspeak3 eula 2>&1";
-        if(0 !== $this->exec($cmd, $output))
+        sprintf("omv-mkconf %s eula 2>&1", $this->getPluginName());
+
+        if(0 !== $this->exec($cmd, $output)) {
            throw new OMVException(OMVErrorMsg::E_EXEC_FAILED, $cmd, implode("\n", $output));
+        }
+
         $dispatcher = &OMVNotifyDispatcher::getInstance();
-        $dispatcher->notify(OMV_NOTIFY_MODIFY, "org.openmediavault.services.teamspeak3", $object);
+        $dispatcher->notify(
+            OMV_NOTIFY_MODIFY,
+            $this->getEventMessagePath(),
+            $object
+        );
     }
 }
 

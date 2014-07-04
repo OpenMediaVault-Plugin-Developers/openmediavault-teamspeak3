@@ -17,44 +17,74 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once "openmediavault/module.inc";
 require_once "openmediavault/config.inc";
 require_once "openmediavault/error.inc";
-require_once "openmediavault/util.inc";
 require_once "openmediavault/initscript.inc";
+require_once "openmediavault/module.inc";
+require_once "openmediavault/util.inc";
 
-class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract
-    implements OMVINotifyListener, OMVIModuleServiceStatus {
+class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
+    OMVINotifyListener,
+    OMVIModuleServiceStatus
+{
+    private function getPluginName()
+    {
+        return strtolower($this->getName());
+    }
+
+    private function getEventMessagePath()
+    {
+        return sprintf("org.openmediavault.service.%s", $this->getPluginName());
+    }
 
     private function getXPath()
     {
-        return "//services/teamspeak3";
+        return sprintf("org.openmediavault.service.%s", $this->getPluginName());
     }
 
-    public function getName() {
+    public function getName()
+    {
         return "teamspeak3";
     }
 
-    public function getStatus() {
+    public function applyConfig()
+    {
+        $cmd = sprintf("omv-mkconf %s firstrun 2>&1", $this->getPluginName());
+
+        if (0 !== $this->exec($cmd, $output)) {
+            throw new OMVException(
+                OMVErrorMsg::E_EXEC_FAILED,
+                $cmd,
+                implode("\n", $output)
+            );
+        }
+    }
+
+    public function getStatus()
+    {
         global $xmlConfig;
 
         $object = $xmlConfig->get($this->getXPath());
 
-        if (is_null($object))
-            throw new OMVException(OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
-                $this->getXPath());
+        if (is_null($object)) {
+            throw new OMVException(
+                OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
+                $this->getXPath()
+            );
+        }
 
-        $initd = new OMVSysVInitScript($this->getName());
+        $initd = new OMVSysVInitScript($this->getPluginName());
 
         return array(
-            "name"    => $this->getName(),
-            "title"   => gettext("Teamspeak3"),
+            "name"    => $this->getPluginName(),
+            "title"   => gettext($this->getName()),
             "enabled" => boolval($object["enable"]),
             "running" => $initd->status() == 0
         );
     }
 
-    public function startService() {
+    public function startService()
+    {
         global $xmlConfig;
 
         $object = $xmlConfig->get($this->getXPath());
@@ -66,30 +96,31 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract
         if (!boolval($object["enable"]))
             return;
 
+        // Use below or the $cmd way?
+        //$initd = new OMVSysVInitScript($this->getPluginName(), true);
+        //$initd->exec();
+
         $cmd = "sudo -u ts3 /etc/init.d/teamspeak3 start && update-rc.d teamspeak3 enable > /dev/null";
-        if (0 !== $this->exec($cmd, $output))
+
+        if (0 !== $this->exec($cmd, $output)) {
             throw new OMVException(OMVErrorMsg::E_EXEC_FAILED,
                 $cmd, implode("\n", $output));
+        }
     }
 
-    public function applyConfig() {
-        $cmd = "sudo omv-mkconf teamspeak3 firstrun";
-
-        if (0 !== $this->exec($cmd, $output))
-            throw new OMVException(OMVErrorMsg::E_EXEC_FAILED,
-                $cmd, implode("\n", $output));
-    }
-
-    public function stopService() {
-        $initd = new OMVSysVInitScript($this->getName(), FALSE);
+    public function stopService()
+    {
+        $initd = new OMVSysVInitScript($this->getPluginName());
         $initd->exec();
     }
 
-    public function bindListeners(OMVNotifyDispatcher $dispatcher) {
+    public function bindListeners(OMVNotifyDispatcher $dispatcher)
+    {
         $dispatcher->addListener(
             OMV_NOTIFY_MODIFY,
-            "org.openmediavault.services.teamspeak3",
-            array($this, "setDirty"));
+            $this->getEventMessagePath(),
+            array($this, "setDirty")
+        );
     }
 }
 
