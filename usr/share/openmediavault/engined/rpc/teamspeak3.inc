@@ -56,7 +56,7 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
         $this->registerMethod('doUpdateEULA');
     }
 
-    function getSettings($params, $context)
+    public function getSettings($params, $context)
     {
         $this->exec("omv-mkconf "
              . $this->getPluginName()
@@ -73,7 +73,7 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
         if (is_null($object)) {
             throw new OMVException(
                 OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
-                $XPath
+                $this->getXPath()
             );
         }
 
@@ -85,7 +85,7 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
         return $object;
     }
 
-    function setSettings($params, $context)
+    public function setSettings($params, $context)
     {
         global $xmlConfig;
 
@@ -116,15 +116,15 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
         $object = array(
             "enable"      => array_boolval($params, "enable"),
             "showtab"     => array_boolval($params, "showtab"),
-            "update"      => array_boolval($params, 'update'),
-            "password"    => $params['password'],
-            "queryport"   => $params['queryport'],
-            "vsport"      => $params['vsport'],
-            "fileport"    => $params['fileport'],
-            "restartmsg"  => $params['restartmsg'],
+            "update"      => array_boolval($params, "update"),
+            "password"    => $params["password"],
+            "queryport"   => $params["queryport"],
+            "vsport"      => $params["vsport"],
+            "fileport"    => $params["fileport"],
+            "restartmsg"  => $params["restartmsg"],
             "eula"        => array_boolval($params, "eula"),
             "enablewi"    => array_boolval($params, "enablewi"),
-            "langquagewi" => $params['languagewi']
+            "langquagewi" => $params["languagewi"]
         );
 
         if (false === $xmlConfig->replace($this->getXPath(), $object)) {

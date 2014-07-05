@@ -89,12 +89,16 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
 
         $object = $xmlConfig->get($this->getXPath());
 
-        if (is_null($object))
-            throw new OMVException(OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
-                $this->getXPath());
+        if (is_null($object)) {
+            throw new OMVException(
+                OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
+                $this->getXPath()
+            );
+        }
 
-        if (!boolval($object["enable"]))
+        if (!boolval($object["enable"])) {
             return;
+        }
 
         // Use below or the $cmd way?
         //$initd = new OMVSysVInitScript($this->getPluginName(), true);
