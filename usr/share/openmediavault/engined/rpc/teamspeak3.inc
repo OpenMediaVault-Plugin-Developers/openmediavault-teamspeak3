@@ -146,7 +146,7 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
 
     public function doUpdateTS3($params, $context)
     {
-        sprintf("omv-mkconf %s update 2>&1", $this->getPluginName());
+        $cmd = sprintf("omv-mkconf %s update 2>&1", $this->getPluginName());
 
         if(0 !== $this->exec($cmd, $output)) {
            throw new OMVException(OMVErrorMsg::E_EXEC_FAILED, $cmd, implode("\n", $output));
@@ -161,18 +161,11 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
     }
 
     public function doUpdateEULA($params, $context) {
-        sprintf("omv-mkconf %s eula 2>&1", $this->getPluginName());
+        $cmd = sprintf("omv-mkconf %s eula 2>&1", $this->getPluginName());
 
         if(0 !== $this->exec($cmd, $output)) {
            throw new OMVException(OMVErrorMsg::E_EXEC_FAILED, $cmd, implode("\n", $output));
         }
-
-        $dispatcher = &OMVNotifyDispatcher::getInstance();
-        $dispatcher->notify(
-            OMV_NOTIFY_MODIFY,
-            $this->getEventMessagePath(),
-            $object
-        );
     }
 }
 

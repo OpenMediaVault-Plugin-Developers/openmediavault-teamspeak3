@@ -476,7 +476,10 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                         icon  : Ext.Msg.QUESTION
                     });
                 },
-                     margin : "0 0 5 0"
+                     margin : "5 5 5 5"
+            },{
+                border : false,
+                html   : "<ul><li>" + ("After you agree to the EUL, please wait a few seconds for TS to setup.") + "</li></ul>"
             }]
         }];
     },
