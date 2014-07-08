@@ -5,8 +5,8 @@
  *   begin                : 18. December 2009
  *   copyright            : (C) 2009-2013 Par0noid Solutions
  *   email                : contact@ts3admin.info
- *   version              : 0.6.8.1
- *   last modified        : 03. March 2013
+ *   version              : 0.7.0.0
+ *   last modified        : 28. January 2014
  *
  *
  *  This file is a powerful library for querying TeamSpeak3 servers.
@@ -36,8 +36,8 @@
  * Take a look on the project website where you can find code examples, a manual and some other stuff.
  * 
  * @author      Par0noid Solutions <contact@ts3admin.info>
- * @version     0.6.8.1
- * @copyright   Copyright (c) 2009-2013, Stefan Z.
+ * @version     0.7.0.0
+ * @copyright   Copyright (c) 2009-2014, Stefan Z.
  * @package		ts3admin
  * @link        http://ts3admin.info
  */
@@ -422,8 +422,8 @@ class ts3admin {
 		if(!$this->runtime['selected']) { return $this->checkSelected(); }
 		$permissionArray = array();
 		
-		if(count($permissionIds) > 0) {
-			foreach($permissionIds AS $value) {
+		if(count($permissions) > 0) {
+			foreach($permissions AS $value) {
 				$permissionArray[] = is_numeric($value) ? 'permid='.$value : 'permsid='.$value;
 			}
 			return $this->getData('boolean', 'channelclientdelperm cid='.$cid.' cldbid='.$cldbid.' '.implode('|', $permissionArray));
@@ -684,7 +684,7 @@ class ts3admin {
 					$command_string[] = (is_numeric($key) ? "permid=" : "permsid=").$this->escapeText($key).' permvalue='.$value;
 				}
 		
-				$result = $this->getData('boolean', 'channelgroupaddperm cgid='.$cid.' '.implode('|', $command_string));
+				$result = $this->getData('boolean', 'channelgroupaddperm cgid='.$cgid.' '.implode('|', $command_string));
 		
 				if(!$result['success'])
 				{
@@ -807,8 +807,8 @@ class ts3admin {
 		if(!$this->runtime['selected']) { return $this->checkSelected(); }
 		$permissionArray = array();
 		
-		if(count($permissionIds) > 0) {
-			foreach($permissionIds AS $value) {
+		if(count($permissions) > 0) {
+			foreach($permissions AS $value) {
 				$permissionArray[] = (is_numeric($value) ? 'permid=' : 'permsid=').$value;
 			}
 			return $this->getData('boolean', 'channelgroupdelperm cgid='.$cgid.' '.implode('|', $permissionArray));
@@ -928,6 +928,7 @@ class ts3admin {
   *  [channel_forced_silence] => 0
   *  [channel_name_phonetic] => 
   *  [channel_icon_id] => 0
+  *  [seconds_empty] => 61 (If it's a temporary channel with a channel delete delay)
   * }
   * </code>
   *
@@ -1051,9 +1052,9 @@ class ts3admin {
   * <b>Input-Array like this:</b>
   * <code>
   * $permissions = array();
-  * $permissions['permissionID'] = 'permissionValue';
+  * $permissions['permissionID'] = array('permissionValue', 'permskip');
   * //or you could use Permission Name
-  * $permissions['permissionName'] = 'permissionValue';
+  * $permissions['permissionName'] = array('permissionValue', 'permskip');
   * </code>
   *
   * @author     Par0noid Solutions
@@ -1082,7 +1083,7 @@ class ts3admin {
 		
 				foreach($permission_part as $key => $value)
 				{
-					$command_string[] = (is_numeric($key) ? "permid=" : "permsid=").$this->escapeText($key).' permvalue='.$value;
+					$command_string[] = (is_numeric($key) ? "permid=" : "permsid=").$this->escapeText($key).' permvalue='.$this->escapeText($value[0]).' permskip='.$this->escapeText($value[1]);
 				}
 		
 				$result = $this->getData('boolean', 'clientaddperm cldbid='.$cldbid.' '.implode('|', $command_string));
@@ -1551,7 +1552,7 @@ class ts3admin {
   * 
   * Displays a list of clients online on a virtual server including their ID, nickname, status flags, etc. The output can be modified using several command options. Please note that the output will only contain clients which are currently in channels you're able to subscribe to.
   *
-  * <br><b>Possible params:</b> [-uid] [-away] [-voice] [-times] [-groups] [-info] [-icon] [-country] [-ip]<br><br>
+  * <br><b>Possible params:</b> [-uid] [-away] [-voice] [-times] [-groups] [-info] [-icon] [-country] [-ip] [-badges]<br><br>
   *
   * <b>Output: (without parameters)</b>
   * <code>
@@ -1586,13 +1587,14 @@ class ts3admin {
   *  [-icon] => [client_icon_id] => 0
   *  [-country] => [client_country] => 
   *  [-ip] => [connection_client_ip] => 127.0.0.1
+  *  [-badges] => [client_badges] => Overwolf=0
   * }
   * </code><br>
   * <b>Usage:</b>
   * <code>
   * $ts3->clientList(); //No parameters
   * $ts3->clientList("-uid"); //Single parameter
-  * $ts3->clientList("-uid -away -voice -times -groups -info -country -icon -ip"); //Multiple parameters
+  * $ts3->clientList("-uid -away -voice -times -groups -info -country -icon -ip -badges"); //Multiple parameters
   * </code><br>
   *
   * @author     Par0noid Solutions
@@ -2412,7 +2414,7 @@ class ts3admin {
   *         [group_id_end] => 0
   *         [pcount] => 0
   *     )
-
+  *
   * [1] => Array
   *     (
   *         [num] => 2
@@ -2427,7 +2429,7 @@ class ts3admin {
   *                         [permdesc] => Retrieve information about ServerQuery commands
   *                         [grantpermid] => 32769
   *                     )
-
+  *
   *                 [1] => Array
   *                     (
   *                         [permid] => 2
@@ -2435,7 +2437,7 @@ class ts3admin {
   *                         [permdesc] => Retrieve global server version (including platform and build number)
   *                         [grantpermid] => 32770
   *                     )
-
+  *
   *                 [2] => Array
   *                     (
   *                         [permid] => 3
@@ -2443,7 +2445,7 @@ class ts3admin {
   *                         [permdesc] => Retrieve global server information
   *                         [grantpermid] => 32771
   *                     )
-
+  *
   *                 [3] => Array
   *                     (
   *                         [permid] => 4
@@ -2607,18 +2609,32 @@ class ts3admin {
 /**
   * sendMessage
   * 
-  * Sends a text message a specified target. The type of the target is determined by targetmode while target specifies the ID of the recipient, whether it be a virtual server, a channel or a client.
+  * Sends a text message a specified target. The type of the target is determined by targetmode while target specifies the ID of the recipient, whether it be a virtual server, a channel or a client.<br>
+  * <b>Hint:</b> You can just write to the channel the query client is in. See link in description for details.
+  *
+  * <b>Modes:</b>
+  * <ul>
+  * 	<li><b>1:</b> send to client</li>
+  * 	<li><b>2:</b> send to channel</li>
+  * 	<li><b>3:</b> send to server</li>
+  * </ul><br>
+  * <b>Targets:</b>
+  * <ul>
+  * 	<li>clientID</li>
+  * 	<li>channelID</li>
+  * 	<li>serverID</li>
+  * </ul>
   *
   * @author     Par0noid Solutions
   * @access		public
-  * @param		integer $mode	{3: server| 2: channel|1: client}
-  * @param		integer $target	{serverID|channelID|clientID}
-  * @param		string	$msg	message
+  * @param		integer $mode
+  * @param		integer $target
+  * @param		string	$msg	Message
+  * @see		http://forum.teamspeak.com/showthread.php/84280-Sendtextmessage-by-query-client http://forum.teamspeak.com/showthread.php/84280-Sendtextmessage-by-query-client
   * @return     boolean	success
   */
 	function sendMessage($mode, $target, $msg) {
 		if(!$this->runtime['selected']) { return $this->checkSelected(); }
-
 		return $this->getData('boolean', 'sendtextmessage targetmode='.$mode.' target='.$target.' msg='.$this->escapeText($msg));
 	}
 
@@ -3478,7 +3494,7 @@ class ts3admin {
 			$settingsString = array();
 		
 			foreach($customFieldSet as $key => $value) {
-				$settingsString[] = 'ident='.$this->escapeText($key).' value='.$this->escapeText($value);
+				$settingsString[] = 'ident='.$this->escapeText($key).'\svalue='.$this->escapeText($value);
 			}
 			
 			$customFieldSet = ' tokencustomset='.implode('|', $settingsString);

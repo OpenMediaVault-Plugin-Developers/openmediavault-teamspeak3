@@ -78,11 +78,14 @@ if(!defined("SECURECHECK")) {die(\$lang['error_file_alone']);}
 ?>
 EOF
 
-            a2ensite openmediavault-ts3wi
+            rm -Rf /etc/nginx/sites-enabled/ts3
+            ln -s /etc/nginx/sites-available/ts3 /etc/nginx/sites-enabled/ts3
+            service nginx reload
         else
-            a2dissite openmediavault-ts3wi
+            rm -Rf /etc/nginx/sites-enabled/ts3
+            service nginx reload
         fi
-        service apache2 reload
+        service nginx reload
     fi
 fi
 

@@ -23,9 +23,20 @@ Ext.define("OMV.module.admin.service.teamspeak3.WebInterface", {
 
     initComponent : function() {
         var me = this;
-        var link = "http://" + location.hostname + "/ts3/";
 
-        me.html = "<iframe src='" + link + "' width='100%' height='100%' />";
+        OMV.Rpc.request({
+            scope    : this,
+            callback : function(id, success, response) {
+                var link = "http://" + window.location.hostname + ":" + response.webport;
+                me.html = "<iframe src='" + link + "' sandbox='allow-same-origin allow-forms allow-scripts' width='100%' height='100%' />";
+            },
+            relayErrors : false,
+            rpcData     : {
+                service  : "Teamspeak3",
+                method   : "getSettings"
+            }
+        });
+
         me.callParent(arguments);
     }
 });
