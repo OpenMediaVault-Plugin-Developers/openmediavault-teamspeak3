@@ -5,6 +5,8 @@ set -e
 . /etc/default/openmediavault
 . /usr/share/openmediavault/scripts/helper-functions
 
+OMV_TS3_CONFIG=/etc/php5/fpm/pool.d/openmediavault-ts3.conf
+
 case "$1" in
     configure)
         if ! getent passwd ts3 >/dev/null 2>&1; then
@@ -15,11 +17,29 @@ case "$1" in
             echo "ts3 user already exists."
         fi
 
-        # DO WE NEED THIS
-        #if [ -e /opt/teamspeak3/ts3server.pid ]; then
-        #    echo "Cleaning old pid file..."
-        #    rm -Rf /opt/teamspeak3/ts3server.pid
-        #fi
+        # Create TS3 fpm config file
+        if [ ! -f ${OMV_TS3_CONFIG} ]; then
+            cat <<EOF > ${OMV_TS3_CONFIG}
+[openmediavault-ts3]
+listen = /var/run/php5-fpm-openmediavault-ts3wi.sock
+listen.owner = www-data
+listen.group = www-data
+listen.mode = 0600
+
+user = www-data
+group = www-data
+
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+
+php_value[post_max_size] = 25M
+php_value[upload_max_filesize] = 25M
+EOF
+        service php5-fpm reload >/dev/null 2>&1
+        fi
 
         chmod 775 /opt
         chown root:users /opt

@@ -105,7 +105,6 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
                     "queryport"  : { "type" : "integer","minimum":1,"maximum":65535 },
                     "vsport"     : { "type" : "integer","minimum":1,"maximum":65535 },
                     "fileport"   : { "type" : "integer","minimum":1,"maximum":65535 },
-                    "webport"    : { "type" : "integer","minimum":1,"maximum":65535 },
                     "restartmsg" : { "type" : "string" },
                     "eula"       : { "type" : "boolean" },
                     "enablewi"   : { "type" : "boolean" },
@@ -123,14 +122,6 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
                 OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
                 $this->getXPath()
             );
-        }
-
-        if ($params["webport"] != $oldObject["webport"]) {
-            $cmd = 'sed -i "/listen/c\listen ' . $params["webport"] . ';" /etc/nginx/sites-available/ts3';
-
-            if(0 !== $this->exec($cmd, $output)) {
-                throw new OMVException(OMVErrorMsg::E_EXEC_FAILED, $cmd, implode("\n", $output));
-            }
         }
 
         $object = array(

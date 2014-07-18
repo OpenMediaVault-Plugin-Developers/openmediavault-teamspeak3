@@ -1,4 +1,4 @@
-usr/share/openmediavault/*  usr/share/openmediavault
-var/www/openmediavault/*    var/www/openmediavault
-var/www/ts3wi/*             var/www/ts3wi
-/etc/apache2/*              etc/apache2
+usr/share/openmediavault/*      usr/share/openmediavault
+var/www/openmediavault/*        var/www/openmediavault
+var/www/ts3wi/*                 var/www/ts3wi
+/etc/nginx/sites-available/ts3  etc/nginx/sites-available

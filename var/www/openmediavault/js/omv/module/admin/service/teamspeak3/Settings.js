@@ -183,20 +183,6 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 checked    : false,
                 boxLabel   : _("Enable the web interface")
             },{
-                xtype: "numberfield",
-                name: "webport",
-                fieldLabel: _("TS3 Webui Port"),
-                vtype: "port",
-                minValue: 1,
-                maxValue: 65535,
-                allowDecimals: false,
-                allowBlank: false,
-                value: 81,
-                    plugins: [{
-                        ptype: "fieldinfo",
-                        text: _("Port to host the Webui")
-                    }]
-            },{
                 xtype      : "checkbox",
                 name       : "showtab",
                 fieldLabel : _("Show Tab"),
@@ -229,8 +215,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 scope   : this,
                 handler : function() {
                     var me = this;
-                    var port = me.getForm().findField("webport").getValue();
-                    var link = "http://" + location.hostname + ":" + port + "/";
+                    var link = "http://" + location.hostname + "/ts3wi/";
                     window.open(link, "_blank");
                 },
                 margin : "0 0 5 0"

@@ -21,25 +21,15 @@
 Ext.define("OMV.module.admin.service.teamspeak3.WebInterface", {
     extend : "OMV.workspace.panel.Panel",
 
+
     initComponent : function() {
         var me = this;
-
-        OMV.Rpc.request({
-            scope    : this,
-            callback : function(id, success, response) {
-                var link = "http://" + window.location.hostname + ":" + response.webport;
-                me.html = "<iframe src='" + link + "' sandbox='allow-same-origin allow-forms allow-scripts' width='100%' height='100%' />";
-            },
-            relayErrors : false,
-            rpcData     : {
-                service  : "Teamspeak3",
-                method   : "getSettings"
-            }
-        });
-
+        var link = "http://" + window.location.hostname + "/ts3wi/";
+        me.html = "<iframe src='" + link + "' sandbox='allow-same-origin allow-forms allow-scripts' width='100%' height='100%' />";
         me.callParent(arguments);
     }
 });
+
 
 OMV.WorkspaceManager.registerPanel({
     id        : "webinterface",
