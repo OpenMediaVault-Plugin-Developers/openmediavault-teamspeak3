@@ -26,9 +26,8 @@ case "$1" in
 
         userdel -r ts3
 
-        if [ ! -d /opt ]; then
-            mkdir /opt
-            chmod 775 /opt
+        if [ -d /usr/share/ts3wi ]; then
+            rm -Rf /usr/share/ts3wi
         fi
     ;;
 
