@@ -11,7 +11,7 @@ GROUP="users"
 INIT="/etc/init.d/teamspeak3"
 options="createinifile=1"
 TEAMSPEAK3_INI="/opt/teamspeak3/ts3server.ini"
-TS3WI_CONFIG="/var/www/ts3wi/config.php"
+TS3WI_CONFIG="/usr/share/ts3wi/config.php"
 
 if [ ! "$2" == "getsettings" ] || [ ! "$2" == "update" ]; then
     if [ -d $APP_PATH ]; then
@@ -149,7 +149,7 @@ eula() {
     chown ts3:users /opt/teamspeak3 -R
     chmod 775 /opt/teamspeak3 -R
     #chmod -R 777 /var/www/ts3wi/icons /var/www/ts3wi/temp /var/www/templates_c
-    chmod -R 777 /var/www/ts3wi
+    chmod -R 777 /usr/share/ts3wi
 }
 
 update() {

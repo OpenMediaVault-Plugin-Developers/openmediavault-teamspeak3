@@ -15,8 +15,8 @@ case "$1" in
             echo "ts3 user already exists."
         fi
 
-        chmod 775 /opt
-        chown root:users /opt
+        chmod 775 /usr/share/ts3wi
+        chown www-data:www-data /usr/share/ts3wi
 
         if ! omv_config_exists "/config/services/teamspeak3"; then
             echo "Initial configuration."

@@ -120,10 +120,24 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
 
     public function bindListeners(OMVNotifyDispatcher $dispatcher)
     {
+        $moduleMgr = &OMVModuleMgr::getInstance();
+
         $dispatcher->addListener(
             OMV_NOTIFY_MODIFY,
             $this->getEventMessagePath(),
             array($this, "setDirty")
+        );
+
+        $dispatcher->addListener(
+            OMV_NOTIFY_MODIFY,
+            $this->getEventMessagePath(),
+            array($moduleMgr->getModule("php5fpm"), "setDirty")
+        );
+
+        $dispatcher->addListener(
+            OMV_NOTIFY_MODIFY,
+            $this->getEventMessagePath(),
+            array($moduleMgr->getModule("webserver"), "setDirty")
         );
     }
 }

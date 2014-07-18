@@ -68,8 +68,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
             properties : "!show"
         },{
             name : [
-                "launch-TS3WI-site",
-                "showtab"
+                "openteamspeak3",
             ],
             conditions : [{
                 name  : "enablewi",
@@ -81,7 +80,8 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
             properties : [
                 "enabled"
             ]
-        }],
+        }]
+    }],
 
     initComponent : function () {
         var me = this;
@@ -184,8 +184,8 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                     }]
             }]
         },{
-            xtype	: "fieldset",
-            title	: _("Web Interface Settings"),
+            xtype    : "fieldset",
+            title    : _("TS3 management site"),
             defaults : {
                 labelSeparator : ""
             },
@@ -193,17 +193,18 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 xtype      : "checkbox",
                 name       : "enablewi",
                 fieldLabel : _("Enable"),
-                checked    : false,plugins    : [{
+                boxLabel: _("TS3 management site."),
+                checked    : false,
+                plugins    : [{
                     ptype : "fieldinfo",
                     text  : _("For more advanced usage try: ") + "<a href='http://www.mysql.com/products/workbench/'>" + _("MySQL Workbench") + "</a>"
                 }]
             },{
-
-                xtype      : "checkbox",
-                name       : "showtab",
-                fieldLabel : _("Show Tab"),
-                boxLabel   : _("Show tab containing Teamspeak3 web interface frame."),
-                checked    : false
+                xtype: "checkbox",
+                name: "showtab",
+                fieldLabel: _("Enable"),
+                boxLabel: _("Show tab containing TS3 WEBUI frame."),
+                checked: false
             },{
                 xtype      : "combo",
                 name       : "languagewi",
@@ -230,6 +231,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 text    : _("Teamspeak3 Web Interface"),
                 scope   : this,
                 handler : function() {
+                    var me = this;
                     window.open("/ts3wi/");
                 },
                 margin : "0 0 8 0"
@@ -507,3 +509,4 @@ OMV.WorkspaceManager.registerPanel({
     position  : 10,
     className : "OMV.module.admin.service.teamspeak3.Settings"
 });
+

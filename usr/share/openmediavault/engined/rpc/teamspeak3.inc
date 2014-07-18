@@ -80,7 +80,7 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
         $object["enable"]	= boolval($object["enable"]);
         $object["showtab"]	= boolval($object["showtab"]);
         $object["update"]	= boolval($object["update"]);
-        $object["enablewi"] = boolval($object["enablewi"]);
+        $object["enablewi"]     = boolval($object["enablewi"]);
 
         return $object;
     }
@@ -109,6 +109,7 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
                     "eula"       : { "type" : "boolean" },
                     "enablewi"   : { "type" : "boolean" },
                     "languagewi" : { "type" : "string" }
+
                 }
             }'
         );
@@ -135,7 +136,7 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
             "restartmsg"  => $params["restartmsg"],
             "eula"        => array_boolval($params, "eula"),
             "enablewi"    => array_boolval($params, "enablewi"),
-            "langquagewi" => $params["languagewi"]
+            "langquagewi" => $params["languagewi"],
         );
 
         if (false === $xmlConfig->replace($this->getXPath(), $object)) {
