@@ -130,6 +130,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 name: "password",
                 fieldLabel: _("ServerQuery Admin Password"),
                 allowBlank: true,
+                editable:   false,
                 autoCreate: {
                     tag: "textarea",
                     autocomplete: "off",
@@ -138,7 +139,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 },
                     plugins: [{
                         ptype: "fieldinfo",
-                        text: _("SOME TEXT HERE."),
+                        text: _("This is your TS3 admin and webui password."),
                     }]
             },{
                 xtype: "numberfield",
@@ -198,13 +199,13 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 checked    : false,
                 plugins    : [{
                     ptype : "fieldinfo",
-                    text  : _("For more advanced usage try: ") + "<a href='http://www.mysql.com/products/workbench/'>" + _("MySQL Workbench") + "</a>"
+                    text  : _("For more information see: ") + "<a href='http://interface.ts-rent.de/smf/'>" + _("TeamSpeak 3 Webinterface Support Forum") + "</a>"
                 }]
             },{
                 xtype: "checkbox",
                 name: "showtab",
                 fieldLabel: _("Enable"),
-                boxLabel: _("Show tab containing TS3 WEBUI frame."),
+                boxLabel: _("Show tab containing ts3 webui frame."),
                 checked: false
             },{
                 xtype      : "combo",
