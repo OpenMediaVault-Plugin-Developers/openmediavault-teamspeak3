@@ -78,14 +78,7 @@ if(!defined("SECURECHECK")) {die(\$lang['error_file_alone']);}
 ?>
 EOF
 
-            rm -Rf /etc/nginx/sites-enabled/ts3
-            ln -s /etc/nginx/sites-available/ts3 /etc/nginx/sites-enabled/ts3
-            service nginx reload
-        else
-            rm -Rf /etc/nginx/sites-enabled/ts3
-            service nginx reload
         fi
-        service nginx reload
     fi
 fi
 

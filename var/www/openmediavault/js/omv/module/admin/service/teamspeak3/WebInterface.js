@@ -24,11 +24,13 @@ Ext.define("OMV.module.admin.service.teamspeak3.WebInterface", {
 
     initComponent : function() {
         var me = this;
-        var link = "http://" + window.location.hostname + "/ts3wi/";
-        me.html = "<iframe src='" + link + "' sandbox='allow-same-origin allow-forms allow-scripts' width='100%' height='100%' />";
+
+
+        me.html = "<iframe src='/ts3wi/' width='100%' height='100%' />";
         me.callParent(arguments);
     }
 });
+
 
 
 OMV.WorkspaceManager.registerPanel({

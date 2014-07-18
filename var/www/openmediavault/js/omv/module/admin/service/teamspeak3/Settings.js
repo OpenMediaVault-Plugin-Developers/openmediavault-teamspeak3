@@ -66,8 +66,22 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 { name  : "eula", value : true }
             ],
             properties : "!show"
-        }]
-    }],
+        },{
+            name : [
+                "launch-TS3WI-site",
+                "showtab"
+            ],
+            conditions : [{
+                name  : "enablewi",
+                value : true
+            },{
+                name  : "enable",
+                value : true
+            }],
+            properties : [
+                "enabled"
+            ]
+        }],
 
     initComponent : function () {
         var me = this;
@@ -171,8 +185,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
             }]
         },{
             xtype	: "fieldset",
-            title	: "Web Interface Settings",
-			name	: "webui",
+            title	: _("Web Interface Settings"),
             defaults : {
                 labelSeparator : ""
             },
@@ -180,9 +193,12 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 xtype      : "checkbox",
                 name       : "enablewi",
                 fieldLabel : _("Enable"),
-                checked    : false,
-                boxLabel   : _("Enable the web interface")
+                checked    : false,plugins    : [{
+                    ptype : "fieldinfo",
+                    text  : _("For more advanced usage try: ") + "<a href='http://www.mysql.com/products/workbench/'>" + _("MySQL Workbench") + "</a>"
+                }]
             },{
+
                 xtype      : "checkbox",
                 name       : "showtab",
                 fieldLabel : _("Show Tab"),
@@ -214,11 +230,9 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 text    : _("Teamspeak3 Web Interface"),
                 scope   : this,
                 handler : function() {
-                    var me = this;
-                    var link = "http://" + location.hostname + "/ts3wi/";
-                    window.open(link, "_blank");
+                    window.open("/ts3wi/");
                 },
-                margin : "0 0 5 0"
+                margin : "0 0 8 0"
             }]
         },{
             xtype: "fieldset",
