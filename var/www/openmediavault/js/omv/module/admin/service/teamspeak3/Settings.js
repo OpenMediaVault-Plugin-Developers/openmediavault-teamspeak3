@@ -186,6 +186,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
         },{
             xtype    : "fieldset",
             title    : _("TS3 management site"),
+            name     : "webui",
             defaults : {
                 labelSeparator : ""
             },

@@ -27,6 +27,10 @@ if [ -e "${TS_MANAGEMENT_SITE_CONF}" ]; then
     rm ${TS_MANAGEMENT_SITE_CONF}
 fi
 
+if [ "$(omv_config_get "//services/teamspeak3/enable")" != "1" ]; then
+    exit 0
+fi
+
 if [ "$(omv_config_get "//services/teamspeak3/enablewi")" != "1" ]; then
     exit 0
 fi
