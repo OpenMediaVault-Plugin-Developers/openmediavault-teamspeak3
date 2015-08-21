@@ -217,7 +217,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                     data    : [
                         [ "de", _("German") ],
                         [ "en", _("English") ],
-                        [ "nl", _("Netherlandish") ],
+                        [ "nl", _("Dutch") ],
                         [ "fr", _("French") ]
                     ]
                 }),
