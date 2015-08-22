@@ -153,7 +153,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 value: 9987,
                     plugins: [{
                         ptype: "fieldinfo",
-                        text: _("Default port: 9987")
+                        text: _("Default port: UDP 9987")
                     }]
             },{
                 xtype: "numberfield",
@@ -167,7 +167,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 value: 10011,
                     plugins: [{
                         ptype: "fieldinfo",
-                        text: _("Default port: 10011")
+                        text: _("Default port: TCP 10011")
                     }]
             },{
                 xtype: "numberfield",
@@ -181,7 +181,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 value: 30033,
                     plugins: [{
                         ptype: "fieldinfo",
-                        text: _("Default port: 30033")
+                        text: _("Default port: TCP 30033")
                     }]
             }]
         },{
