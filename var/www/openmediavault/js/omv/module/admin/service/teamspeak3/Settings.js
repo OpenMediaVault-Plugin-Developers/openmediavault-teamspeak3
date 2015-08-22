@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 OpenMediaVault Plugin Developers
+ * Copyright (C) 2013-2015 OpenMediaVault Plugin Developers
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +80,17 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
             properties : [
                 "enabled"
             ]
+        },{
+            name : [
+                "openteamspeak3"
+            ],
+            conditions  : [{
+                name : "enablewi",
+                value : true
+            }],
+            properties : function(valid, field) {
+                this.setButtonDisabled("webinterface", !valid);
+            }
         }]
     }],
 
@@ -104,6 +115,26 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
 
         me.callParent(arguments);
     },
+
+    getButtonItems : function() {
+        var me = this;
+        var items = me.callParent(arguments);
+        items.push({
+            id       : me.getId() + "-webinterface",
+            xtype    : "button",
+            text     : _("TS3 Webinterface"),
+            icon     : "images/teamspeak3.png",
+            iconCls  : Ext.baseCSSPrefix + "btn-icon-16x16",
+            disabled : true,
+            scope    : me,
+            handler  : function() {
+				var me = this;
+                           window.open("/ts3wi/");
+            }
+        });
+        return items;
+    },
+
 
 
     getFormItems : function() {
@@ -227,16 +258,6 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 editable      : false,
                 triggerAction : "all",
                 value         : "en"
-            },{
-                xtype   : "button",
-                name    : "openteamspeak3",
-                text    : _("Teamspeak3 Web Interface"),
-                scope   : this,
-                handler : function() {
-                    var me = this;
-                    window.open("/ts3wi/");
-                },
-                margin : "0 0 8 0"
             }]
         },{
             xtype: "fieldset",
@@ -511,4 +532,3 @@ OMV.WorkspaceManager.registerPanel({
     position  : 10,
     className : "OMV.module.admin.service.teamspeak3.Settings"
 });
-
