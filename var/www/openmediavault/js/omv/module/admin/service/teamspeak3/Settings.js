@@ -68,20 +68,6 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
             properties : "!show"
         },{
             name : [
-                "openteamspeak3",
-            ],
-            conditions : [{
-                name  : "enablewi",
-                value : true
-            },{
-                name  : "enable",
-                value : true
-            }],
-            properties : [
-                "enabled"
-            ]
-        },{
-            name : [
                 "openteamspeak3"
             ],
             conditions  : [{
@@ -122,6 +108,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
         items.push({
             id       : me.getId() + "-webinterface",
             xtype    : "button",
+            name     : "openteamspeak3",
             text     : _("TS3 Webinterface"),
             icon     : "images/teamspeak3.png",
             iconCls  : Ext.baseCSSPrefix + "btn-icon-16x16",
