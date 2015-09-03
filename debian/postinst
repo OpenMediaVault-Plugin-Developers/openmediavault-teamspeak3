@@ -16,7 +16,7 @@ case "$1" in
         fi
 
         chmod 775 /usr/share/ts3wi
-        chown www-data:www-data /usr/share/ts3wi
+        chown -R www-data:www-data /usr/share/ts3wi
 
         if ! omv_config_exists "/config/services/teamspeak3"; then
             echo "Initial configuration."
