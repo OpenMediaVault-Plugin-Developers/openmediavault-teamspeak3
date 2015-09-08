@@ -200,7 +200,7 @@ update() {
 
     # Download latest TS3 Server files
     wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
-    tar xf teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz && cp -R teamspeak3-server_linux-$ARCHITECTURE/* . && rm -rf teamspeak3-server_linux-$ARCHITECTURE/
+    tar xf teamspeak3*.gz && cp -R teamspeak3-server_linux-$ARCHITECTURE/* . && rm -rf teamspeak3-server_linux-$ARCHITECTURE/
     if [ -f /tmp/ts3server_backup/licensekey.dat ]; then
         mv /tmp/ts3server_backup/licensekey.dat $APP_PATH
     fi
@@ -225,7 +225,7 @@ update() {
     fi
 
     # Delete downloaded TeamSpeak 3 server archive
-    rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz 2> /dev/null
+    rm teamspeak3*.gz 2> /dev/null
 
     # Change owner and group of files
     chown $USER:$GROUP -R .
