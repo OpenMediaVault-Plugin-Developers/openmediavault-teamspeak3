@@ -110,9 +110,9 @@ if [ ! -d "$APP_PATH" ]; then
     get_info;
     cd /opt
     wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
-    tar zxf teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
+    tar zxf teamspeak3*.gz
+    rm teamspeak3*.gz
     mv teamspeak3-server_linux-$ARCHITECTURE teamspeak3
-    rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
     chown $USER:$USER $APP_PATH -R
     chmod 777 $APP_PATH -R
     cd $APP_PATH
@@ -130,9 +130,9 @@ eula() {
     get_info;
     cd /opt
     wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
-    tar zxf teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
+    tar zxf teamspeak3*.gz
+    rm teamspeak3*.gz
     mv teamspeak3-server_linux-$ARCHITECTURE teamspeak3
-    rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
     chown $USER:users $APP_PATH -R
     chmod 777 $APP_PATH -R
     cd $APP_PATH
