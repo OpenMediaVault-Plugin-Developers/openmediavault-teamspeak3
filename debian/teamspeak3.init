@@ -29,16 +29,6 @@ elif [ -e ts3server_linux_amd64 ]; then
                 echo "Do you have the right TS3 Server package for your system? You have: `uname` `uname -m`, not Linux x86_64."
         fi
         BINARYNAME="ts3server_linux_amd64"
-elif [ -e ts3server_freebsd_x86 ]; then
-        if [ ! -z "`uname | grep Linux`" -o ! -z "`uname -m | grep 64`" ]; then
-                echo "Do you have the right TS3 Server package for your system? You have: `uname` `uname -m`, not FreeBSD i386."
-        fi
-        BINARYNAME="ts3server_freebsd_x86"
-elif [ -e ts3server_freebsd_amd64 ]; then
-        if [ ! -z "`uname | grep Linux`" -o -z "`uname -m | grep 64`" ]; then
-                echo "Do you have the right TS3 Server package for your system? You have: `uname` `uname -m`, not FreeBSD amd64."
-        fi
-        BINARYNAME="ts3server_freebsd_amd64"
 else
         echo "Could not locate binary file, aborting"
         exit 5
