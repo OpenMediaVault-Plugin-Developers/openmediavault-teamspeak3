@@ -24,7 +24,9 @@ case "$1" in
             rm -Rf /opt/teamspeak3/* &>/dev/null
         fi
 
-        userdel -r ts3
+        if getent passwd ts3 >/dev/null 2>&1; then
+            userdel -r ts3
+        fi
 
         if [ -d /usr/share/ts3wi ]; then
             rm -Rf /usr/share/ts3wi

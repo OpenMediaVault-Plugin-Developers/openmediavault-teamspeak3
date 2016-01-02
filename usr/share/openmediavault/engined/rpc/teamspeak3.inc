@@ -80,7 +80,7 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
         $object["enable"]	= boolval($object["enable"]);
         $object["showtab"]	= boolval($object["showtab"]);
         $object["update"]	= boolval($object["update"]);
-        $object["enablewi"]     = boolval($object["enablewi"]);
+        $object["enablewi"] = boolval($object["enablewi"]);
 
         return $object;
     }

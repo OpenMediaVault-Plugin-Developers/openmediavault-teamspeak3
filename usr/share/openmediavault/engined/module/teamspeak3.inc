@@ -89,10 +89,11 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
 
         $object = $xmlConfig->get($this->getXPath());
 
-        if (is_null($object)) {
+        if (0 !== $this->exec($cmd, $output)) {
             throw new OMVException(
-                OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
-                $this->getXPath()
+                OMVErrorMsg::E_EXEC_FAILED,
+                $cmd,
+                implode(PHP_EOL, $output)
             );
         }
 
@@ -107,9 +108,11 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
         $cmd = "sudo -u ts3 /etc/init.d/teamspeak3 start && update-rc.d teamspeak3 enable > /dev/null";
 
         if (0 !== $this->exec($cmd, $output)) {
-            throw new OMVException(OMVErrorMsg::E_EXEC_FAILED,
+            throw new OMVException(
+                OMVErrorMsg::E_EXEC_FAILED,
                 $cmd,
                 implode(PHP_EOL, $output)
+            );
         }
     }
 
