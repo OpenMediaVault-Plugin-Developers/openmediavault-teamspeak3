@@ -40,7 +40,7 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
 
     private function getXPath()
     {
-        return sprintf("//services/%s", $this->getPluginName());
+        return sprintf(" /config/services/%s", $this->getPluginName());
     }
 
     public function getName()
@@ -160,8 +160,12 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
     {
         $cmd = sprintf("omv-mkconf %s update 2>&1", $this->getPluginName());
 
-        if(0 !== $this->exec($cmd, $output)) {
-           throw new OMVException(OMVErrorMsg::E_EXEC_FAILED, $cmd, implode("\n", $output));
+        if (0 !== $this->exec($cmd, $output)) {
+            throw new OMVException(
+                OMVErrorMsg::E_EXEC_FAILED,
+                $cmd,
+                implode(PHP_EOL, $output)
+            );
         }
 
         $dispatcher = &OMVNotifyDispatcher::getInstance();
@@ -175,8 +179,12 @@ class OMVRpcServiceTeamspeak3 extends OMVRpcServiceAbstract
     public function doUpdateEULA($params, $context) {
         $cmd = sprintf("omv-mkconf %s eula 2>&1", $this->getPluginName());
 
-        if(0 !== $this->exec($cmd, $output)) {
-           throw new OMVException(OMVErrorMsg::E_EXEC_FAILED, $cmd, implode("\n", $output));
+        if (0 !== $this->exec($cmd, $output)) {
+            throw new OMVException(
+                OMVErrorMsg::E_EXEC_FAILED,
+                $cmd,
+                implode(PHP_EOL, $output)
+            );
         }
     }
 }

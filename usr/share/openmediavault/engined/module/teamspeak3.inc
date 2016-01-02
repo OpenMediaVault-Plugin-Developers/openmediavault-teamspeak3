@@ -19,7 +19,7 @@
 
 require_once "openmediavault/config.inc";
 require_once "openmediavault/error.inc";
-require_once "openmediavault/initscript.inc";
+require_once "openmediavault/systemctl.inc";
 require_once "openmediavault/module.inc";
 require_once "openmediavault/util.inc";
 
@@ -39,7 +39,7 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
 
     private function getXPath()
     {
-        return sprintf("//services/%s", $this->getPluginName());
+        return sprintf(" /config/services/%s", $this->getPluginName());
     }
 
     public function getName()
@@ -55,7 +55,7 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
             throw new OMVException(
                 OMVErrorMsg::E_EXEC_FAILED,
                 $cmd,
-                implode("\n", $output)
+                implode(PHP_EOL, $output)
             );
         }
     }
@@ -73,13 +73,13 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
             );
         }
 
-        $initd = new OMVSysVInitScript($this->getPluginName());
+        $systemCtl = new OMVSystemCtl($this->getPluginName());
 
         return array(
-            "name"    => $this->getPluginName(),
+            "name"    => $this->getName(),
             "title"   => gettext($this->getName()),
             "enabled" => boolval($object["enable"]),
-            "running" => $initd->status() == 0
+            "running" => $systemCtl->isActive()
         );
     }
 
@@ -101,21 +101,22 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
         }
 
         // Use below or the $cmd way?
-        //$initd = new OMVSysVInitScript($this->getPluginName(), true);
-        //$initd->exec();
+        //$systemCtl = new OMVSystemCtl($this->getPluginName());
+        //$systemCtl->enable(true);
 
         $cmd = "sudo -u ts3 /etc/init.d/teamspeak3 start && update-rc.d teamspeak3 enable > /dev/null";
 
         if (0 !== $this->exec($cmd, $output)) {
             throw new OMVException(OMVErrorMsg::E_EXEC_FAILED,
-                $cmd, implode("\n", $output));
+                $cmd,
+                implode(PHP_EOL, $output)
         }
     }
 
     public function stopService()
     {
-        $initd = new OMVSysVInitScript($this->getPluginName());
-        $initd->exec();
+        $systemCtl = new OMVSystemCtl($this->getPluginName());
+        $systemCtl->disable(true);
     }
 
     public function bindListeners(OMVNotifyDispatcher $dispatcher)

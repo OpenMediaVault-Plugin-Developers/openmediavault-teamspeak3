@@ -16,7 +16,7 @@ TS3WI_CONFIG="/usr/share/ts3wi/config.php"
 if [ ! "$2" == "getsettings" ] || [ ! "$2" == "update" ]; then
     if [ -d $APP_PATH ]; then
         cat /dev/null > ${TEAMSPEAK3_INI}
-            xmlstarlet sel -t -m "//services/teamspeak3" \
+            xmlstarlet sel -t -m " /config/services/teamspeak3" \
             -o "machine_id=" -n \
             -v "concat('default_voice_port=',vsport)" -n \
             -o "voice_ip=0.0.0.0" -n \
@@ -42,9 +42,9 @@ if [ ! "$2" == "getsettings" ] || [ ! "$2" == "update" ]; then
 
 
 
-        if [ $(omv_config_get '//services/teamspeak3/enablewi') != "0" ]; then
-            port=$(omv_config_get '//services/teamspeak3/queryport')
-            lang=$(omv_config_get '//services/teamspeak3/langquagewi')
+        if [ $(omv_config_get ' /config/services/teamspeak3/enablewi') != "0" ]; then
+            port=$(omv_config_get ' /config/services/teamspeak3/queryport')
+            lang=$(omv_config_get ' /config/services/teamspeak3/langquagewi')
 
             cat <<EOF > ${TS3WI_CONFIG}
 
@@ -104,7 +104,7 @@ get_info() {
 
 first_run() {
 if [ ! -d "$APP_PATH" ]; then
-    if [ $(omv_config_get '//services/teamspeak3/enable') != "1" ]; then
+    if [ $(omv_config_get ' /config/services/teamspeak3/enable') != "1" ]; then
         exit 0
     fi
     get_info;
@@ -122,7 +122,7 @@ if [ ! -d "$APP_PATH" ]; then
     sleep 1
     TEST=$(grep 'password= ' ${APP_PATH}/details | sed -n 's/loginname= "serveradmin", password= "//p' | sed -e 's/"$//')
     pkill ts3server_linux_$ARCHITECTURE
-    xmlstarlet ed -L -u "//services/teamspeak3/password" -v $TEST -n ${OMV_CONFIG_FILE}
+    xmlstarlet ed -L -u " /config/services/teamspeak3/password" -v $TEST ${OMV_CONFIG_FILE}
 fi
 }
 
@@ -144,8 +144,8 @@ eula() {
     TEST=$(grep 'password= ' ${APP_PATH}/details | sed -n 's/loginname= "serveradmin", password= "//p' | sed -e 's/"$//')
     kill $(ps aux | grep '[t]s3server_linux_' | awk '{print $2}')
     #pkill ts3server_linux_$ARCHITECTURE
-    xmlstarlet ed -L -u "//services/teamspeak3/password" -v $TEST -n ${OMV_CONFIG_FILE}
-    xmlstarlet ed -L -u "//services/teamspeak3/eula" -v "1" -n ${OMV_CONFIG_FILE}
+    xmlstarlet ed -L -u " /config/services/teamspeak3/password" -v $TEST ${OMV_CONFIG_FILE}
+    xmlstarlet ed -L -u " /config/services/teamspeak3/eula" -v "1" ${OMV_CONFIG_FILE}
     chown ts3:users /opt/teamspeak3 -R
     chmod 775 /opt/teamspeak3 -R
     #chmod -R 777 /var/www/ts3wi/icons /var/www/ts3wi/temp /var/www/templates_c
@@ -157,9 +157,9 @@ update() {
     # Check, if MySQL-Database exists
     TEAMSPEAK_DATABASE_TYPE="SQLite"
     INI_FILE_NAME="ts3server.ini"
-    TEAMSPEAK_SERVER_QUERY_PORT=$(omv_config_get '//services/teamspeak3/queryport')
-    MSG=$(omv_config_get '//services/teamspeak3/restartmsg' | sed -e 's# #\\s#g')
-    SERVERADMIN_PASSWORD=$(omv_config_get '//services/teamspeak3/password')
+    TEAMSPEAK_SERVER_QUERY_PORT=$(omv_config_get ' /config/services/teamspeak3/queryport')
+    MSG=$(omv_config_get ' /config/services/teamspeak3/restartmsg' | sed -e 's# #\\s#g')
+    SERVERADMIN_PASSWORD=$(omv_config_get ' /config/services/teamspeak3/password')
     # Is TSDNS running/used?
     TSDNS_STATUS=$(netstat -tulen | grep -i tcp | grep -E ":41144" | true)
     if [[ "$TSDNS_STATUS" != "" ]]; then
@@ -271,9 +271,9 @@ getsettings() {
     INSTALLED_VERSION="$(cat $(find $APP_PATH -name 'ts3server*_0.log' | sort | egrep -E -v '/tmp/ts3server_backup/logs' | egrep -E -v '/tmp/ts3server_backup/logs' | tail -1) | egrep -o 'TeamSpeak 3 Server ((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}' | egrep -o '((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}')"
     #INSTALLED_VERSION=0.7.00 #use to test if button shows if values do not match
     if [ "$INSTALLED_VERSION" == "$LATEST_VERSION" ]; then
-        xmlstarlet ed -L -u "//services/teamspeak3/update" -v "0" -n ${OMV_CONFIG_FILE}
+        xmlstarlet ed -L -u " /config/services/teamspeak3/update" -v "0" ${OMV_CONFIG_FILE}
     else
-        xmlstarlet ed -L -u "//services/teamspeak3/update" -v "1" -n ${OMV_CONFIG_FILE}
+        xmlstarlet ed -L -u " /config/services/teamspeak3/update" -v "1" ${OMV_CONFIG_FILE}
     fi
 }
 

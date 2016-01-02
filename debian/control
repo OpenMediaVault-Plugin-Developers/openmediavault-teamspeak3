@@ -1,16 +1,17 @@
 Source: openmediavault-teamspeak3
 Section: net
-XB-Plugin-Section: gaming
 Priority: optional
 Maintainer: OpenMediaVault Plugin Developers <plugins@omv-extras.org>
-Build-Depends: debhelper (>= 9 )
-Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.6
+XB-Plugin-Section: gaming
 
 Package: openmediavault-teamspeak3
 Architecture: all
-Depends: ${misc:Depends}, openmediavault (>= 0.6), telnet, rsync
+Depends: telnet,
+         rsync,
+         openmediavault (>= 3.0),
+         ${misc:Depends}
 Description: OpenMediaVault TeamSpeak 3 plugin
  TeamSpeak is software for quality voice communication via the Internet. 
  The software is free of charge to non-profit entities.
- 
-

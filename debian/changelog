@@ -1,3 +1,9 @@
+openmediavault-teamspeak3 (3.0) stable; urgency=low
+
+  * OMV 3.0 release.
+
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Sat, 02 Jan 2015 09:08:45 +0000
+
 openmediavault-teamspeak3 (1.0.1) stable; urgency=low
 
   * Add custom debian/control field XB-Plugin-Section

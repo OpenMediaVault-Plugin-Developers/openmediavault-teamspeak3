@@ -7,38 +7,47 @@ set -e
 
 case "$1" in
     configure)
-        if ! getent passwd ts3 >/dev/null 2>&1; then
-            echo "Adding teamspeak3 user..."
-            useradd --create-home --groups users --no-user-group --shell /usr/sbin/nologin ts3
-            insserv -d teamspeak3
-        else
-            echo "ts3 user already exists."
+        # Set the default settings of the service package to those expected by
+        # OpenMediaVault.
+        if [ -z "${2}" ]; then
+            systemctl stop teamspeak3.service
+            systemctl disable teamspeak3.service
+        fi
+
+        SERVICE_XPATH_NAME="teamspeak3"
+        SERVICE_XPATH="/config/services/${SERVICE_XPATH_NAME}"
+
+        if ! getent passwd teamspeak3 >/dev/null 2>&1; then
+            adduser --quiet \
+                    --system \
+                    --ingroup users \
+                    --no-create-home \
+                    --disabled-password \
+                    teamspeak3
         fi
 
         chmod 775 /usr/share/ts3wi
         chown -R www-data:www-data /usr/share/ts3wi
 
-        if ! omv_config_exists "/config/services/teamspeak3"; then
-            echo "Initial configuration."
-            object="<enable>0</enable>"
-            object="${object}<password></password>"
-            object="${object}<queryport>10011</queryport>"
-            object="${object}<vsport>9987</vsport>"
-            object="${object}<fileport>30033</fileport>"
-            object="${object}<update></update>"
-            object="${object}<restartmsg></restartmsg>"
-            object="${object}<eula>0</eula>"
-            object="${object}<enablewi>0</enablewi>"
-            object="${object}<languagewi>en</languagewi>"
-            omv_config_add_element "/config/services" "teamspeak3" "${object}" true
+        if ! omv_config_exists "${SERVICE_XPATH}"; then
+            omv_config_add_element "/config/services" "${SERVICE_XPATH_NAME}"
+            omv_config_add_element "${SERVICE_XPATH}" "enable" "0"
+            omv_config_add_element "${SERVICE_XPATH}" "password" ""
+            omv_config_add_element "${SERVICE_XPATH}" "queryport" "10011"
+            omv_config_add_element "${SERVICE_XPATH}" "vsport" "9987"
+            omv_config_add_element "${SERVICE_XPATH}" "fileport" "30033"
+            omv_config_add_element "${SERVICE_XPATH}" "update" "0"
+            omv_config_add_element "${SERVICE_XPATH}" "restartmsg" ""
+            omv_config_add_element "${SERVICE_XPATH}" "eula" "0"
+            omv_config_add_element "${SERVICE_XPATH}" "enablewi" "0"
+            omv_config_add_element "${SERVICE_XPATH}" "languagewi" "en"
         fi
-        
-        omv_install_fixperms
 
         # Activate package triggers. These triggers are only set during the
         # package installation.
         dpkg-trigger update-fixperms
         dpkg-trigger update-locale
+
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
@@ -49,5 +58,7 @@ case "$1" in
         exit 1
     ;;
 esac
+
+#DEBHELPER#
 
 exit 0
