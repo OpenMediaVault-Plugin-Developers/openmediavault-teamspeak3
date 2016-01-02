@@ -89,11 +89,10 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
 
         $object = $xmlConfig->get($this->getXPath());
 
-        if (0 !== $this->exec($cmd, $output)) {
+        if (is_null($object)) {
             throw new OMVException(
-                OMVErrorMsg::E_EXEC_FAILED,
-                $cmd,
-                implode(PHP_EOL, $output)
+                OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
+                $this->getXPath()
             );
         }
 
