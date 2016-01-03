@@ -37,7 +37,7 @@ fi
 case "$1" in
         start)
                 if [ -e ts3server.pid ]; then
-                        if ( kill -0 $(cat ts3server.pid) 2> /dev/null ); then
+                        if ( kill -0 $(pgrep -u ts3) 2> /dev/null ); then
                                 echo "The server is already running, try restart or stop"
                                 exit 1
                         else
@@ -64,7 +64,7 @@ case "$1" in
                         fi
                         if [ -x "$BINARYNAME" ]; then
                                 export LD_LIBRARY_PATH="${LIBRARYPATH}:${LD_LIBRARY_PATH}"
-                                "./${BINARYNAME}" ${options} > /dev/null &
+                                su ts3 -c "./${BINARYNAME}" ${options} > /dev/null &
                                 echo $! > ts3server.pid
                                 echo "TeamSpeak 3 server started, for details please view the log file"
                         else
@@ -78,10 +78,10 @@ case "$1" in
         stop)
                 if [ -e ts3server.pid ]; then
                         echo -n "Stopping the TeamSpeak 3 server"
-                        if ( kill -TERM $(cat ts3server.pid) 2> /dev/null ); then
+                        if ( kill -TERM $(pgrep -u ts3) 2> /dev/null ); then
                                 c=1
                                 while [ "$c" -le 300 ]; do
-                                        if ( kill -0 $(cat ts3server.pid) 2> /dev/null ); then
+                                        if ( kill -0 $(pgrep -u ts3) 2> /dev/null ); then
                                                 echo -n "."
                                                 sleep 1
                                         else
@@ -90,9 +90,9 @@ case "$1" in
                                         c=$((++c))
                                 done
                         fi
-                        if ( kill -0 $(cat ts3server.pid) 2> /dev/null ); then
+                        if ( kill -0 $(pgrep -u ts3) 2> /dev/null ); then
                                 echo "Server is not shutting down cleanly - killing"
-                                kill -KILL $(cat ts3server.pid)
+                                kill -KILL $(pgrep -u ts3)
                         else
                                 echo "done"
                         fi
@@ -106,7 +106,7 @@ case "$1" in
         ;;
         status)
                 if [ -e ts3server.pid ]; then
-                        if ( kill -0 $(cat ts3server.pid) 2> /dev/null ); then
+                        if ( kill -0 $(pgrep -u ts3) 2> /dev/null ); then
                                 echo "Server is running"
                         else
                                 echo "Server seems to have died"

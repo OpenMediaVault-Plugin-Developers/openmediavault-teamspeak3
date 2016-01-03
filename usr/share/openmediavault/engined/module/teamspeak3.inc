@@ -101,18 +101,18 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
         }
 
         // Use below or the $cmd way?
-        //$systemCtl = new OMVSystemCtl($this->getPluginName());
-        //$systemCtl->enable(true);
+        $systemCtl = new OMVSystemCtl($this->getPluginName());
+        $systemCtl->enable(true);
 
-        $cmd = "sudo -u ts3 /etc/init.d/teamspeak3 start && update-rc.d teamspeak3 enable > /dev/null";
+        //$cmd = "sudo -u ts3 /etc/init.d/teamspeak3 start && update-rc.d teamspeak3 enable > /dev/null";
 
-        if (0 !== $this->exec($cmd, $output)) {
-            throw new OMVException(
-                OMVErrorMsg::E_EXEC_FAILED,
-                $cmd,
-                implode(PHP_EOL, $output)
-            );
-        }
+        //if (0 !== $this->exec($cmd, $output)) {
+        //    throw new OMVException(
+        //        OMVErrorMsg::E_EXEC_FAILED,
+        //        $cmd,
+        //        implode(PHP_EOL, $output)
+        //    );
+        //}
     }
 
     public function stopService()

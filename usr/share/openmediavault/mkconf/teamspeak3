@@ -127,6 +127,9 @@ fi
 }
 
 eula() {
+    if [ -d /opt/teamspeak3 ]; then
+        rm /opt/teamspeak3 -R
+    fi
     get_info;
     cd /opt
     wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
@@ -138,10 +141,16 @@ eula() {
     cd $APP_PATH
     #./ts3server_minimal_runscript.sh >& details &
     LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APP_PATH;export LD_LIBRARY_PATH
-    sudo -u ts3 ./ts3server_minimal_runscript.sh $options >& $APP_PATH/details &
+    #echo "./ts3server_minimal_runscript.sh ${options} > ${APP_PATH}/details"
+    #sudo -u ts3 eval "./ts3server_minimal_runscript.sh $options > $APP_PATH/details" &
     #sudo -u ts3 "$APP_PATH/ts3server_linux_$ARCHITECTURE $options >& $APP_PATH/details" &
-    sleep 2
-    TEST=$(grep 'password= ' ${APP_PATH}/details | sed -n 's/loginname= "serveradmin", password= "//p' | sed -e 's/"$//')
+    sudo -u ts3 ./ts3server_minimal_runscript.sh createinifile=1 >& /opt/teamspeak3/details &
+    while true; do
+        TEST=$(grep 'password= ' ${APP_PATH}/details | sed -n 's/loginname= "serveradmin", password= "//p' | sed -e 's/"$//')
+        if [ "${TEST}" != "" ]; then
+            break
+        fi
+    done
     kill $(ps aux | grep '[t]s3server_linux_' | awk '{print $2}')
     #pkill ts3server_linux_$ARCHITECTURE
     xmlstarlet ed -L -u " /config/services/teamspeak3/password" -v $TEST ${OMV_CONFIG_FILE}
