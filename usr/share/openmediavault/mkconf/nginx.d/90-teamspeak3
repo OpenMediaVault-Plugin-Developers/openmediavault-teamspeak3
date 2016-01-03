@@ -40,10 +40,12 @@ location /ts3wi/ {
     alias /usr/share/ts3wi/;
     index index.php;
     location ~ \.php$ {
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass unix:/var/run/php5-fpm-openmediavault-ts3.sock;
-        fastcgi_index index.php;
-        include fastcgi_params;
+        if (!-f $request_filename) { return 404; }
+        expires             epoch;
+        include             /etc/nginx/fastcgi_params;
+        fastcgi_param       SCRIPT_FILENAME         $request_filename;
+        fastcgi_index       index.php;
+        fastcgi_pass        unix:/var/run/php5-fpm-openmediavault-ts3.sock;
     }
     location = /ts3wi/favicon.ico {
         log_not_found off;
