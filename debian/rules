@@ -4,6 +4,8 @@ include ./openmediavault.mk
 
 PLUGIN_NAME=teamspeak3
 
+%:
+	dh $@ --with systemd
 clean:
 	dh_testdir
 	dh_testroot
@@ -21,7 +23,7 @@ binary-indep: install omv_clean_scm
 	dh_testroot
 	dh_installchangelogs
 	dh_installdebconf
-	dh_installinit --name=teamspeak3
+	dh_systemd_enable --name=teamspeak3
 	dh_lintian
 	dh_link
 	dh_compress

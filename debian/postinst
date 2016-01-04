@@ -9,7 +9,7 @@ case "$1" in
     configure)
         # Set the default settings of the service package to those expected by
         # OpenMediaVault.
-        if [ -z "${2}" ] && [ -f /etc/init.d/teamspeak3 ]; then
+        if [ -z "${2}" ]; then
             systemctl stop teamspeak3.service
             systemctl disable teamspeak3.service
         fi
