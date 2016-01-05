@@ -24,6 +24,7 @@ binary-indep: install omv_clean_scm
 	dh_installchangelogs
 	dh_installdebconf
 	dh_systemd_enable --name=teamspeak3
+	dh_systemd_start --no-start --name=teamspeak3
 	dh_lintian
 	dh_link
 	dh_compress
