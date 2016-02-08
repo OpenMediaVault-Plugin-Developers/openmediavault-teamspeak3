@@ -138,7 +138,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 checked    : false,
                 plugins: [{
                     ptype: "fieldinfo",
-                    text: _("By clicking Enable you are agreeing to Teamspeaks <a href='http://www.teamspeak.com/?page=eula' target='_blank'>EULA</a>"),
+                    text: _("Please check if you need a licence <a href='http://sales.teamspeakusa.com/licensing.php' target='_blank'>Licensing information</a>"),
                 }]
             },{
                 xtype: "passwordfield",
@@ -214,7 +214,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                 checked    : false,
                 plugins    : [{
                     ptype : "fieldinfo",
-                    text  : _("For more information see: ") + "<a href='http://interface.ts-rent.de/smf/'>" + _("TeamSpeak 3 Webinterface Support Forum") + "</a>"
+                    text  : _("For more information see: <a href='http://interface.ts-rent.de/smf/' target='_blank'>TeamSpeak 3 Webinterface Support Forum</a>")
                 }]
             },{
                 xtype: "checkbox",

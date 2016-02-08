@@ -1,3 +1,9 @@
+openmediavault-teamspeak3 (3.1) stable; urgency=low
+
+  * Add curl.
+
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Mon, 08 Feb 2016 10:00:45 +0000
+
 openmediavault-teamspeak3 (3.0) stable; urgency=low
 
   * OMV 3.0 release.

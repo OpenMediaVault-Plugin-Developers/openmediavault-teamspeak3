@@ -11,6 +11,7 @@ Architecture: all
 Depends: telnet,
          rsync,
          openmediavault (>= 3.0),
+         curl,
          ${misc:Depends}
 Description: OpenMediaVault TeamSpeak 3 plugin
  TeamSpeak is software for quality voice communication via the Internet. 

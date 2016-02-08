@@ -86,20 +86,15 @@ get_info() {
     cd /tmp
     # Fetch latest version from www.teamspeak.com
     TEMPFILE_1=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-    TEMPFILE_2=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-    TEMPFILE_3=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-    wget http://www.teamspeak.de/download/ -q -O - > $TEMPFILE_1
-    grep -A 120 'Linux' $TEMPFILE_1 > $TEMPFILE_2
-    grep -A 1 'Server' $TEMPFILE_2 > $TEMPFILE_3
-    LATEST_VERSION="$(cat $TEMPFILE_3 | egrep -o  '((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}' | tail -1)"
-    MODE=$(arch)
-    if [ "$MODE" == "x86_64" ]; then
+    curl -s -L http://www.teamspeak.de/download/ | grep -A 6 'amd64' | grep -Po '(?<=Version: )[^ ]+' > $TEMPFILE_1
+    LATEST_VERSION="$(cat $TEMPFILE_1)"
+    if arch | grep x86_64 >/dev/null 2>&1; then
         ARCHITECTURE="amd64"
     else
         ARCHITECTURE="x86"
     fi
     TS3_SERVER_DOWNLOAD_LINK="http://teamspeak.gameserver.gamed.de/ts3/releases/$LATEST_VERSION/teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz"
-    rm $TEMPFILE_1 $TEMPFILE_2 $TEMPFILE_3 2> /dev/null
+    rm $TEMPFILE_1 2> /dev/null
 }
 
 first_run() {
