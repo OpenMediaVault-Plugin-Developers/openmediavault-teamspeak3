@@ -44,7 +44,7 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
 
     public function getName()
     {
-        return "teamspeak3";
+        return "Teamspeak3";
     }
 
     public function applyConfig()

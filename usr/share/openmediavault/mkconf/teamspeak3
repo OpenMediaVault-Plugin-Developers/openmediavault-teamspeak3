@@ -266,7 +266,7 @@ getsettings() {
         INSTALLED_VERSION=$(cat $APP_PATH/CHANGELOG | grep -Po '(?<=Server Release )[^ ]+' | head -n 1)
     else
         INSTALLED_VERSION=$LATEST_VERSION
-        xmlstarlet ed -L -u "/config/services/teamspeak3/update" -v "0" -n ${OMV_CONFIG_FILE}
+        xmlstarlet ed -L -u "/config/services/teamspeak3/eula" -v "0" -n ${OMV_CONFIG_FILE}
     fi
 
     #INSTALLED_VERSION=0.7.00 #use to test if button shows if values do not match
