@@ -246,9 +246,9 @@ update() {
     # Check, if the server start was successfull
     if [[ $? -eq 0 ]]; then
         sleep 5s
-        TS_SERVER_STATUS=$($INIT status)
+        TS_SERVER_STATUS=$($INIT status | grep active | sed 's/.*(\(.*\)).*/\1/')
         if [[ "$TS_SERVER_STATUS" == "Server is running" ]]; then
-            if [[ "$TSDNS_STATUS" == "Running" ]]; then
+            if [[ "$TSDNS_STATUS" == "running" ]]; then
                 sudo -u $USER ./tsdns/tsdnsserver_linux_$ARCHITECTURE &
                 TSDNS_STATUS=""
                 sleep 5s
