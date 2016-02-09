@@ -8,7 +8,7 @@ set -e
 APP_PATH="/opt/teamspeak3"
 USER="ts3"
 GROUP="users"
-INIT="/etc/init.d/teamspeak3"
+INIT="service teamspeak3 "
 options="createinifile=1"
 TEAMSPEAK3_INI="/opt/teamspeak3/ts3server.ini"
 TS3WI_CONFIG="/usr/share/ts3wi/config.php"
@@ -85,16 +85,13 @@ fi
 get_info() {
     cd /tmp
     # Fetch latest version from www.teamspeak.com
-    TEMPFILE_1=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-    curl -s -L http://www.teamspeak.de/download/ | grep -A 6 'amd64' | grep -Po '(?<=Version: )[^ ]+' > $TEMPFILE_1
-    LATEST_VERSION="$(cat $TEMPFILE_1)"
+    LATEST_VERSION=`curl -s -L http://www.teamspeak.de/download/ | grep -A 6 'amd64' | grep -Po '(?<=Version: )[^ ]+'`
     if arch | grep x86_64 >/dev/null 2>&1; then
         ARCHITECTURE="amd64"
     else
         ARCHITECTURE="x86"
     fi
-    TS3_SERVER_DOWNLOAD_LINK="http://teamspeak.gameserver.gamed.de/ts3/releases/$LATEST_VERSION/teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz"
-    rm $TEMPFILE_1 2> /dev/null
+    TS3_SERVER_DOWNLOAD_LINK="http://teamspeak.gameserver.gamed.de/ts3/releases/$LATEST_VERSION/teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.bz"
 }
 
 first_run() {
@@ -104,9 +101,9 @@ if [ ! -d "$APP_PATH" ]; then
     fi
     get_info;
     cd /opt
-    wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
-    tar zxf teamspeak3*.gz
-    rm teamspeak3*.gz
+    wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.bz
+    tar jxf teamspeak3*.bz
+    rm teamspeak3*.bz
     mv teamspeak3-server_linux-$ARCHITECTURE teamspeak3
     chown $USER:$USER $APP_PATH -R
     chmod 777 $APP_PATH -R
@@ -127,9 +124,9 @@ eula() {
     fi
     get_info;
     cd /opt
-    wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
-    tar zxf teamspeak3*.gz
-    rm teamspeak3*.gz
+    wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.bz
+    tar jxf teamspeak3*.bz
+    rm teamspeak3*.bz
     mv teamspeak3-server_linux-$ARCHITECTURE teamspeak3
     chown $USER:users $APP_PATH -R
     chmod 777 $APP_PATH -R
@@ -203,8 +200,8 @@ update() {
     cd $APP_PATH
 
     # Download latest TS3 Server files
-    wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz
-    tar xf teamspeak3*.gz && cp -R teamspeak3-server_linux-$ARCHITECTURE/* . && rm -rf teamspeak3-server_linux-$ARCHITECTURE/
+    wget $TS3_SERVER_DOWNLOAD_LINK -q -O teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.bz
+    tar jxf teamspeak3*.bz && cp -R teamspeak3-server_linux-$ARCHITECTURE/* . && rm -rf teamspeak3-server_linux-$ARCHITECTURE/
     if [ -f /tmp/ts3server_backup/licensekey.dat ]; then
         mv /tmp/ts3server_backup/licensekey.dat $APP_PATH
     fi
@@ -229,15 +226,14 @@ update() {
     fi
 
     # Delete downloaded TeamSpeak 3 server archive
-    rm teamspeak3*.gz 2> /dev/null
+    rm teamspeak3*.bz 2> /dev/null
 
     # Change owner and group of files
     chown $USER:$GROUP -R .
 
     # Start TeamSpeak 3 server
-    sudo -u $USER /$INIT start 2> /dev/null
-    #sudo -u $USER ./ts3server_minimal_runscript.sh $options &
-    #su -c "$INIT start inifile=ts3server.ini" $USER
+    #sudo -u $USER /$INIT start 2> /dev/null
+    sudo -u $USER $INIT start 2> /dev/null
 
     # Check, if the server start was successfull
     if [[ $? -eq 0 ]]; then
@@ -259,9 +255,9 @@ update() {
     else
         rsync -av /tmp/ts3server_backup/ $APP_PATH 2> /dev/null && rm -rf /tmp/ts3server_backup 2> /dev/null
         if [[ "$TEAMSPEAK_DATABASE_TYPE" == "MySQL" ]]; then
-            su -c "rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz && $INIT start inifile=ts3server.ini" $USER
+            su -c "rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.bz && $INIT start inifile=ts3server.ini" $USER
         else
-            su -c "rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.gz && $INIT start" $USER
+            su -c "rm teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.bz && $INIT start" $USER
         fi
     fi
 
@@ -272,7 +268,7 @@ getsettings() {
     echo "getting settings"
     get_info;
     echo "got settings"
-    INSTALLED_VERSION="$(cat $(find $APP_PATH -name 'ts3server*_0.log' | sort | egrep -E -v '/tmp/ts3server_backup/logs' | egrep -E -v '/tmp/ts3server_backup/logs' | tail -1) | egrep -o 'TeamSpeak 3 Server ((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}' | egrep -o '((\.)?[0-9]{1,3}){1,3}\.[0-9]{1,3}')"
+    INSTALLED_VERSION="$(cat $APP_PATH/CHANGELOG | grep -Po '(?<=Server Release )[^ ]+' | head -n 1)"​
     #INSTALLED_VERSION=0.7.00 #use to test if button shows if values do not match
     if [ "$INSTALLED_VERSION" == "$LATEST_VERSION" ]; then
         xmlstarlet ed -L -u " /config/services/teamspeak3/update" -v "0" ${OMV_CONFIG_FILE}
