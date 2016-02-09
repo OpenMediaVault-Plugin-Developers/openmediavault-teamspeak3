@@ -91,15 +91,7 @@ get_info() {
     else
         ARCHITECTURE="x86"
     fi
-<<<<<<< HEAD
-<<<<<<< HEAD
     TS3_SERVER_DOWNLOAD_LINK="http://teamspeak.gameserver.gamed.de/ts3/releases/$LATEST_VERSION/teamspeak3-server_linux_$ARCHITECTURE-$LATEST_VERSION.tar.bz2"
-=======
-    TS3_SERVER_DOWNLOAD_LINK="http://teamspeak.gameserver.gamed.de/ts3/releases/$LATEST_VERSION/teamspeak3-server_linux_$ARCHITECTURE-$LATEST_VERSION.tar.bz"
->>>>>>> 03ac93422784d07b4615573ef081cb56a7c53329
-=======
-    TS3_SERVER_DOWNLOAD_LINK="http://teamspeak.gameserver.gamed.de/ts3/releases/$LATEST_VERSION/teamspeak3-server_linux-$ARCHITECTURE-$LATEST_VERSION.tar.bz"
->>>>>>> f0fe887ec3ddf6127015787938026d81a810e56e
 }
 
 first_run() {
