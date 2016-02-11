@@ -503,7 +503,7 @@ Ext.define("OMV.module.admin.service.teamspeak3.Settings", {
                      margin : "5 5 5 5"
             },{
                 border : false,
-                html   : "<ul><li>" + ("After you agree to the EUL, please wait a few seconds for TS to setup.") + "</li></ul>"
+                html   : "<ul><li>" + ("After you agree to the EULA, please wait a few seconds for TS to setup.") + "</li></ul>"
             }]
         }];
     },
