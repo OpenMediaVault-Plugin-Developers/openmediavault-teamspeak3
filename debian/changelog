@@ -3,7 +3,7 @@ openmediavault-teamspeak3 (1.0.2) stable; urgency=low
   * Fix for new archive packages
   * Fix init script
 
- -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Thu, 11 Feb 2016 12:20:35 -0000
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Thu, 11 Feb 2016 12:33:35 -0000
 
 openmediavault-teamspeak3 (1.0.1) stable; urgency=low
 

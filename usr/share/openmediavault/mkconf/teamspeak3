@@ -234,7 +234,7 @@ update() {
     if [[ $? -eq 0 ]]; then
         sleep 5s
         TS_SERVER_STATUS=$($INIT status)
-        if [[ "$TS_SERVER_STATUS" == "Server is Running" ]]; then
+        if [[ "$TS_SERVER_STATUS" == "Server is running" ]]; then
             if [[ "$TSDNS_STATUS" == "Running" ]]; then
                 sudo -u $USER ./tsdns/tsdnsserver_linux_$ARCHITECTURE &
                 TSDNS_STATUS=""
