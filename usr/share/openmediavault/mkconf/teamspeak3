@@ -116,7 +116,7 @@ first_run() {
         LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APP_PATH;export LD_LIBRARY_PATH
         sudo -u ./ts3server_minimal_runscript.sh >& details &
         sleep 1
-        TEST=$(cat details | grep -Po '(?<=password= ")[^"]+')
+        TEST=$(grep 'password= ' ${APP_PATH}/details | sed -n 's/loginname= "serveradmin", password= "//p' | sed -e 's/"$//')
         pkill ts3server_linux_$ARCHITECTURE
         xmlstarlet ed -L -u " /config/services/teamspeak3/password" -v $TEST ${OMV_CONFIG_FILE}
     fi
@@ -136,11 +136,12 @@ eula() {
     #sudo -u ts3 "$APP_PATH/ts3server_linux_$ARCHITECTURE $options >& $APP_PATH/details" &
     sudo -u ts3 ./ts3server_minimal_runscript.sh createinifile=1 >& /opt/teamspeak3/details &
     while true; do
-        TEST=$(cat details | grep -Po '(?<=password= ")[^"]+')
+        TEST=$(grep 'password= ' ${APP_PATH}/details | sed -n 's/loginname= "serveradmin", password= "//p' | sed -e 's/"$//')
         if [ "${TEST}" != "" ]; then
             break
         fi
     done
+    kill $(ps aux | grep '[s]udo -u ts3' | awk '{print $2}')
     #kill $(ps aux | grep '[t]s3server_linux_' | awk '{print $2}')
     #pkill ts3server_linux_$ARCHITECTURE
     xmlstarlet ed -L -u " /config/services/teamspeak3/password" -v $TEST ${OMV_CONFIG_FILE}
