@@ -151,6 +151,7 @@ eula() {
     usermod -d /opt/teamspeak3 ts3
     usermod -g nogroup ts3
     rm -rf /home/ts3
+    chown -R www-data:www-data /usr/share/ts3wi
     chmod -R 777 /usr/share/ts3wi/{temp,templates_c,icons}
     chmod -R 777 /usr/share/ts3wi/site/backups
 }
