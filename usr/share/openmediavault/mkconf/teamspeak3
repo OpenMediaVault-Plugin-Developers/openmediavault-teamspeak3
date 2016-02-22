@@ -149,7 +149,6 @@ eula() {
 	pkill -9 -u `id -u ts3` && rm ts3server.pid || :
 	chown $USER:$GROUP $APP_PATH -R
 	usermod -d /opt/teamspeak3 ts3
-	usermod -g nogroup ts3
 	rm -rf /home/ts3
 	chown -R www-data:www-data /usr/share/ts3wi
 	chmod -R 777 /usr/share/ts3wi/{temp,templates_c,icons}
