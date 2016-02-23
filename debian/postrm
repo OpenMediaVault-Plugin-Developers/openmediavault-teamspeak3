@@ -7,10 +7,9 @@ set -e
 
 case "$1" in
     purge)
-        rm -Rf /opt/teamspeak3 & >/dev/null
 
         if [ -f "/opt/teamspeak3/ts3server.pid" ]; then
-            PID=$(cat /var/run/teamspeak3/ts3server.pid);
+            PID=$(cat /opt/teamspeak3/ts3server.pid);
             kill -0 $PID 2>/dev/null;
 
             if [ $? -eq 0 ]; then
@@ -21,11 +20,11 @@ case "$1" in
         omv_config_delete "//services/teamspeak3"
 
         if [ -d "/opt/teamspeak3" ]; then
-            rm -Rf /opt/teamspeak3/* &>/dev/null
+            rm -rf /opt/teamspeak3 &>/dev/null
         fi
 
         if getent passwd ts3 >/dev/null 2>&1; then
-            userdel -r ts3
+            userdel ts3
         fi
 
         if [ -d /usr/share/ts3wi ]; then
@@ -43,4 +42,3 @@ case "$1" in
 esac
 
 exit 0
-
