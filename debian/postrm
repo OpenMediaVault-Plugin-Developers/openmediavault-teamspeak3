@@ -28,7 +28,7 @@ case "$1" in
         fi
 
         if [ -d /usr/share/ts3wi ]; then
-            rm -Rf /usr/share/ts3wi
+            rm -rf /usr/share/ts3wi
         fi
     ;;
 
