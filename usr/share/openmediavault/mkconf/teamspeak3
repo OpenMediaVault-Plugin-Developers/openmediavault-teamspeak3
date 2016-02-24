@@ -100,10 +100,10 @@ dl_ts3() {
 	wget -q $TS3_SERVER_DOWNLOAD_LINK
 	tar xjf teamspeak3*.bz2
 	rm teamspeak3*.bz2
-    if [ ! -d "$APP_PATH" ]; then
+	if [ ! -d "$APP_PATH" ]; then
 	    mv teamspeak3-server_linux_$ARCHITECTURE teamspeak3
-        chown -R $USER:$GROUP $APP_PATH
-    fi
+	    chown -R $USER:$GROUP $APP_PATH
+    	fi
 }
 
 first_run() {
@@ -204,7 +204,7 @@ update() {
 	# Download latest TS3 Server files
 	dl_ts3;
 	cd $APP_PATH
-    cp -R /opt/teamspeak3-server_linux_$ARCHITECTURE/* . && rm -rf /opt/teamspeak3-server_linux_$ARCHITECTURE
+	cp -R /opt/teamspeak3-server_linux_$ARCHITECTURE/* . && rm -rf /opt/teamspeak3-server_linux_$ARCHITECTURE
 	if [ -f /tmp/ts3server_backup/licensekey.dat ]; then
 		mv /tmp/ts3server_backup/licensekey.dat $APP_PATH
 	fi
