@@ -224,8 +224,8 @@ update() {
 	if  [ -f ts3server.pid ]; then
 		rm ts3server.pid
 	fi
-    
-    chown -R $USER:$GROUP .
+	
+	chown -R $USER:$GROUP .
 
 	# Start TeamSpeak 3 server
 	sudo -u $USER $INIT start 2> /dev/null
