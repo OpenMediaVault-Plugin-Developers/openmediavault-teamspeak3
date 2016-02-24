@@ -83,16 +83,13 @@ fi
 get_info() {
 	cd /tmp
 	# Fetch latest version from www.teamspeak.com
-	TEMPFILE_1=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-	curl -s -L http://www.teamspeak.com/downloads#server | grep -A 6 'Server 64-bit' | head -n 2 | grep -Po '(?<=version">)[^<]+' > $TEMPFILE_1
-	LATEST_VERSION="$(cat $TEMPFILE_1)"
+	LATEST_VERSION=`curl -s -L http://www.teamspeak.com/downloads#server | grep -A 6 'Server 64-bit' | head -n 2 | grep -Po '(?<=version">)[^<]+'`
 	if arch | grep x86_64 >/dev/null 2>&1; then
 		ARCHITECTURE="amd64"
 	else
 		ARCHITECTURE="x86"
 	fi
 	TS3_SERVER_DOWNLOAD_LINK="http://teamspeak.gameserver.gamed.de/ts3/releases/$LATEST_VERSION/teamspeak3-server_linux_$ARCHITECTURE-$LATEST_VERSION.tar.bz2"
-	rm $TEMPFILE_1 2> /dev/null
 }
 
 dl_ts3() {
