@@ -92,7 +92,7 @@ get_info() {
 		ARCHITECTURE="x86"
 	fi
 	TS3_SERVER_DOWNLOAD_LINK="http://teamspeak.gameserver.gamed.de/ts3/releases/$LATEST_VERSION/teamspeak3-server_linux_$ARCHITECTURE-$LATEST_VERSION.tar.bz2"
-	#rm $TEMPFILE_1 2> /dev/null
+	rm $TEMPFILE_1 2> /dev/null
 }
 
 dl_ts3() {
