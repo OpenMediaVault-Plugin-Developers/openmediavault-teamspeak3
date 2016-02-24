@@ -103,7 +103,7 @@ dl_ts3() {
 	if [ ! -d "$APP_PATH" ]; then
 	    mv teamspeak3-server_linux_$ARCHITECTURE teamspeak3
 	    chown -R $USER:$GROUP $APP_PATH
-    	fi
+	fi
 }
 
 first_run() {
