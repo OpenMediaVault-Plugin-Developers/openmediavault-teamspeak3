@@ -84,7 +84,7 @@ get_info() {
 	cd /tmp
 	# Fetch latest version from www.teamspeak.com
 	TEMPFILE_1=$(tempfile -m 0600 -p "ts3_download_page-" -s ".tmp")
-	curl -s -L http://www.teamspeak.de/download/ | grep -A 6 'amd64' | grep -Po '(?<=Version: )[^ ]+' > $TEMPFILE_1
+	curl -s -L http://www.teamspeak.com/downloads#server | grep -A 6 'Server 64-bit' | head -n 2 | grep -Po '(?<=version">)[^<]+' > $TEMPFILE_1
 	LATEST_VERSION="$(cat $TEMPFILE_1)"
 	if arch | grep x86_64 >/dev/null 2>&1; then
 		ARCHITECTURE="amd64"
@@ -92,7 +92,7 @@ get_info() {
 		ARCHITECTURE="x86"
 	fi
 	TS3_SERVER_DOWNLOAD_LINK="http://teamspeak.gameserver.gamed.de/ts3/releases/$LATEST_VERSION/teamspeak3-server_linux_$ARCHITECTURE-$LATEST_VERSION.tar.bz2"
-	rm $TEMPFILE_1 2> /dev/null
+	#rm $TEMPFILE_1 2> /dev/null
 }
 
 dl_ts3() {
@@ -100,8 +100,10 @@ dl_ts3() {
 	wget -q $TS3_SERVER_DOWNLOAD_LINK
 	tar xjf teamspeak3*.bz2
 	rm teamspeak3*.bz2
-	mv teamspeak3-server_linux_$ARCHITECTURE teamspeak3
-	chown $USER:$GROUP $APP_PATH -R
+    if [ ! -d "$APP_PATH" ]; then
+	    mv teamspeak3-server_linux_$ARCHITECTURE teamspeak3
+        chown -R $USER:$GROUP $APP_PATH
+    fi
 }
 
 first_run() {
@@ -202,6 +204,7 @@ update() {
 	# Download latest TS3 Server files
 	dl_ts3;
 	cd $APP_PATH
+    cp -R /opt/teamspeak3-server_linux_$ARCHITECTURE/* . && rm -rf /opt/teamspeak3-server_linux_$ARCHITECTURE
 	if [ -f /tmp/ts3server_backup/licensekey.dat ]; then
 		mv /tmp/ts3server_backup/licensekey.dat $APP_PATH
 	fi
@@ -221,6 +224,8 @@ update() {
 	if  [ -f ts3server.pid ]; then
 		rm ts3server.pid
 	fi
+    
+    chown -R $USER:$GROUP .
 
 	# Start TeamSpeak 3 server
 	sudo -u $USER $INIT start 2> /dev/null
