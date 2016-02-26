@@ -1,0 +1,1 @@
+ts3 ALL=NOPASSWD: /usr/sbin/service teamspeak3 start,/usr/sbin/service teamspeak3 start inifile=ts3server.ini
