@@ -30,6 +30,8 @@ case "$1" in
                     --gecos "" \
                     ts3
         fi
+        
+        chmod 0440 /etc/sudoers.d/ts3
 
         if ! omv_config_exists "${SERVICE_XPATH}"; then
             omv_config_add_element "/config/services" "${SERVICE_XPATH_NAME}"
