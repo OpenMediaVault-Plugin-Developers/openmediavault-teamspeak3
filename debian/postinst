@@ -18,7 +18,7 @@ case "$1" in
         SERVICE_XPATH="/config/services/${SERVICE_XPATH_NAME}"
 
         if [ ! -d /opt/teamspeak3 ] && getent passwd ts3 >/dev/null 2>&1; then
-            userdel -r ts3 >/dev/null
+            userdel ts3 >/dev/null
         fi
 
         if ! getent passwd ts3 >/dev/null 2>&1; then
