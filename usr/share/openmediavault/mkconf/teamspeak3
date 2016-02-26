@@ -225,7 +225,8 @@ update() {
 	chown -R $USER:$GROUP .
 
 	# Start TeamSpeak 3 server
-	sudo -u $USER $INIT start 2> /dev/null
+	sudo -u $USER sudo $INIT start 2> /dev/null
+	#sudo -u $USER $INIT start 2> /dev/null
 	#sudo -u $USER /$INIT start 2> /dev/null
 	#sudo -u $USER ./ts3server_minimal_runscript.sh $options &
 	#su -c "$INIT start inifile=ts3server.ini" $USER
@@ -250,9 +251,9 @@ update() {
 	else
 		rsync -av /tmp/ts3server_backup/ $APP_PATH 2> /dev/null && rm -rf /tmp/ts3server_backup 2> /dev/null
 		if [[ "$TEAMSPEAK_DATABASE_TYPE" == "MySQL" ]]; then
-			su -c "$INIT start inifile=ts3server.ini" $USER
+			su -s /bin/bash -c "sudo $INIT start inifile=ts3server.ini" $USER
 		else
-			su -c "$INIT start" $USER
+			su -s /bin/bash -c "sudo $INIT start" $USER
 		fi
 	fi
 
