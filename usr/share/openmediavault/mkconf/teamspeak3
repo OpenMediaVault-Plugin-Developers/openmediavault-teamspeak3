@@ -81,7 +81,6 @@ EOF
 fi
 
 get_info() {
-	cd /tmp
 	# Fetch latest version from www.teamspeak.com
 	LATEST_VERSION=`curl -s -L http://www.teamspeak.com/downloads#server | grep -A 6 'Server 64-bit' | head -n 2 | grep -Po '(?<=version">)[^<]+'`
 	if arch | grep x86_64 >/dev/null 2>&1; then
@@ -112,8 +111,8 @@ first_run() {
 		get_info;
 		dl_ts3;
 		cd $APP_PATH
-		#./ts3server_minimal_runscript.sh >& details &
 		ldconfig
+		#./ts3server_minimal_runscript.sh >& details &
 		sudo -u ./ts3server_minimal_runscript.sh >& details &
 		sleep 1
 		TEST=$(grep 'password= ' ${APP_PATH}/details | sed -n 's/loginname= "serveradmin", password= "//p' | sed -e 's/"$//')
@@ -129,8 +128,8 @@ eula() {
 	get_info;
 	dl_ts3;
 	cd $APP_PATH
-	#./ts3server_minimal_runscript.sh >& details &
 	ldconfig
+	#./ts3server_minimal_runscript.sh >& details &
 	#echo "./ts3server_minimal_runscript.sh ${options} > ${APP_PATH}/details"
 	#sudo -u ts3 eval "./ts3server_minimal_runscript.sh $options > $APP_PATH/details" &
 	#sudo -u ts3 "$APP_PATH/ts3server_linux_$ARCHITECTURE $options >& $APP_PATH/details" &
