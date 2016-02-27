@@ -97,10 +97,10 @@ dl_ts3() {
 	wget -q $TS3_SERVER_DOWNLOAD_LINK
 	tar xjf teamspeak3*.bz2
 	rm teamspeak3*.bz2
+	sed -i '/export LD_LIBRARY_PATH/d' /opt/teamspeak3-server_linux_$ARCHITECTURE/ts3server*.sh
 	if [ ! -d "$APP_PATH" ]; then
 	    mv teamspeak3-server_linux_$ARCHITECTURE teamspeak3
 	    chown -R $USER:$GROUP $APP_PATH
-	    sed -i '/export LD_LIBRARY_PATH/d' $APP_PATH/ts3server_minimal_runscript.sh $APP_PATH/ts3server_startscript.sh
 	fi
 }
 
