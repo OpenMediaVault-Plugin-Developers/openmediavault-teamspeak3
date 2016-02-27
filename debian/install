@@ -1,4 +1,4 @@
-etc/sudoers.d/*  /etc/sudoers.d
+etc/*  /etc
 usr/share/openmediavault/* usr/share/openmediavault
 usr/share/ts3wi/* usr/share/ts3wi
 var/www/openmediavault/* var/www/openmediavault
