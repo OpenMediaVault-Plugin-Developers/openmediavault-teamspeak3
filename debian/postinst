@@ -32,6 +32,7 @@ case "$1" in
         fi
         
         chmod 0440 /etc/sudoers.d/ts3
+        chmod 644 /etc/ld.so.conf.d/ts3libs.conf
 
         if ! omv_config_exists "${SERVICE_XPATH}"; then
             omv_config_add_element "/config/services" "${SERVICE_XPATH_NAME}"
