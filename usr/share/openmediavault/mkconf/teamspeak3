@@ -112,7 +112,7 @@ first_run() {
 		dl_ts3;
 		cd $APP_PATH
 		#./ts3server_minimal_runscript.sh >& details &
-		LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APP_PATH;export LD_LIBRARY_PATH
+		ldconfig
 		sudo -u ./ts3server_minimal_runscript.sh >& details &
 		sleep 1
 		TEST=$(grep 'password= ' ${APP_PATH}/details | sed -n 's/loginname= "serveradmin", password= "//p' | sed -e 's/"$//')
@@ -129,7 +129,7 @@ eula() {
 	dl_ts3;
 	cd $APP_PATH
 	#./ts3server_minimal_runscript.sh >& details &
-	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APP_PATH;export LD_LIBRARY_PATH
+	ldconfig
 	#echo "./ts3server_minimal_runscript.sh ${options} > ${APP_PATH}/details"
 	#sudo -u ts3 eval "./ts3server_minimal_runscript.sh $options > $APP_PATH/details" &
 	#sudo -u ts3 "$APP_PATH/ts3server_linux_$ARCHITECTURE $options >& $APP_PATH/details" &
