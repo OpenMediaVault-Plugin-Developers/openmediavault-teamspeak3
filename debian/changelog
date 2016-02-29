@@ -1,3 +1,9 @@
+openmediavault-teamspeak3 (2.0) stable; urgency=low
+
+  * adjust for bzip2 and fix paths for latest version
+
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Mon, 29 Feb 2016 18:09:29 -0500
+
 openmediavault-teamspeak3 (1.0.2) stable; urgency=low
 
   * Fix for new archive packages
