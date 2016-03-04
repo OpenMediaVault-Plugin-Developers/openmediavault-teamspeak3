@@ -5,7 +5,7 @@ After=network.target
 [Service]
 WorkingDirectory=/opt/teamspeak3/
 User=ts3
-Group=users
+Group=nogroup
 Type=forking
 ExecStart=/opt/teamspeak3/ts3server_startscript.sh start inifile=ts3server.ini
 ExecStop=/opt/teamspeak3/ts3server_startscript.sh stop

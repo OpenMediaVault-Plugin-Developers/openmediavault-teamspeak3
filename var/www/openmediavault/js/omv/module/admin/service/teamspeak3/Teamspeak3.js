@@ -20,7 +20,7 @@
 OMV.WorkspaceManager.registerNode({
     id      : "teamspeak3",
     path    : "/service",
-    text    : _("Teamspeak3"),
+    text    : _("TeamSpeak 3"),
     icon16  : "images/teamspeak3.png",
     iconSvg : "images/teamspeak3.svg"
 });
