@@ -77,7 +77,7 @@ class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
 
         return array(
             "name"    => $this->getName(),
-            "title"   => gettext($this->getName()),
+            "title"   => gettext("TeamSpeak 3"),
             "enabled" => boolval($object["enable"]),
             "running" => $systemCtl->isActive()
         );
