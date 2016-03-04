@@ -1,3 +1,9 @@
+openmediavault-teamspeak3 (2.1) stable; urgency=low
+
+  * Fix postrm
+
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Fri, 04 Mar 2016 16:18:55 -0500
+
 openmediavault-teamspeak3 (2.0) stable; urgency=low
 
   * adjust for bzip2 and fix paths for latest version
