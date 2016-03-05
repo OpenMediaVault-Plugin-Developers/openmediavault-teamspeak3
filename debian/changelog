@@ -1,3 +1,9 @@
+openmediavault-teamspeak3 (2.2) stable; urgency=low
+
+  * Fix another issue in postrm 
+
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Sat, 05 Mar 2016 08:15:14 -0500
+
 openmediavault-teamspeak3 (2.1) stable; urgency=low
 
   * Fix postrm
@@ -24,7 +30,3 @@ openmediavault-teamspeak3 (1.0.1) stable; urgency=low
  -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Fri, 12 Dec 2014 06:18:35 -0600
 
 openmediavault-teamspeak3 (1.0.0) stable; urgency=low
-
-  * initial release
-
- -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Tue, 11 Feb 2014 11:13:52 -0500
