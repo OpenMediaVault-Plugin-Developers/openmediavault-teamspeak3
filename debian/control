@@ -8,7 +8,7 @@ XB-Plugin-Section: gaming
 
 Package: openmediavault-teamspeak3
 Architecture: all
-Depends: openmediavault (>= 3.0),
+Depends: openmediavault (= 3.0.13),
          telnet,
          rsync,
          curl,
