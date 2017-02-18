@@ -26,27 +26,9 @@
 // require_once "openmediavault/module.inc";
 // require_once "openmediavault/util.inc";
 
-// class OMVModuleTeamspeak3 extends OMVModuleServiceAbstract implements
-//     OMVINotifyListener,
-//     OMVIModuleServiceStatus
 class OMVModuleTeamspeak3 extends \OMV\Engine\Module\ServiceAbstract implements
     \OMV\Engine\Notify\IListener, \OMV\Engine\Module\IServiceStatus
 {
-    // private function getPluginName()
-    // {
-    //     return strtolower($this->getName());
-    // }
-
-    // private function getEventMessagePath()
-    // {
-    //     return sprintf("org.openmediavault.service.%s", $this->getPluginName());
-    // }
-
-    // private function getXPath()
-    // {
-    //     return sprintf(" /config/services/%s", $this->getPluginName());
-    // }
-
     public function getName()
     {
         return "Teamspeak3";
@@ -57,17 +39,6 @@ class OMVModuleTeamspeak3 extends \OMV\Engine\Module\ServiceAbstract implements
         $cmd = new \OMV\System\Process("omv-mkconf", "teamspeak3", "firstrun");
         $cmd->setRedirect2to1();
         $cmd->execute();
-
-
-        // $cmd = sprintf("omv-mkconf %s firstrun 2>&1", $this->getPluginName());
-
-        // if (0 !== $this->exec($cmd, $output)) {
-        //     throw new OMVException(
-        //         OMVErrorMsg::E_EXEC_FAILED,
-        //         $cmd,
-        //         implode(PHP_EOL, $output)
-        //     );
-        // }
     }
 
     public function getStatus()
@@ -99,8 +70,6 @@ class OMVModuleTeamspeak3 extends \OMV\Engine\Module\ServiceAbstract implements
     {
         $systemCtl = new \OMV\System\SystemCtl("teamspeak3");
         $systemCtl->disable(TRUE);
-        // $systemCtl = new OMVSystemCtl($this->getPluginName());
-        // $systemCtl->disable(true);
     }
 
     public function bindListeners(\OMV\Engine\Notify\Dispatcher $dispatcher)
