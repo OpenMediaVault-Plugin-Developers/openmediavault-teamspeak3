@@ -1,3 +1,11 @@
+openmediavault-teamspeak3 (3.4) unstable; urgency=medium
+
+  * Changed dep to OMV = 3.0.15 to ensure compatibility
+  * Ported to > 3.0.15 w/ adding datamodels
+  * FIXME: ts3ui not working
+
+ -- OpenMediaVault Plugin Developers <user1@localhost.localdomain>  Fri, 18 Feb 2017 17:39:02 +0100
+
 openmediavault-teamspeak3 (3.3) stable; urgency=low
 
   * Changed dependency of OMV Package to = 3.0.13 to avoid accidental
