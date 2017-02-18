@@ -80,25 +80,6 @@ class OMVModuleTeamspeak3 extends \OMV\Engine\Module\ServiceAbstract implements
             "title" => gettext("teamspeak3"),
             "enabled" => $object->get("enable"),
             "running" => $systemCtl->isActive()
-
-        // global $xmlConfig;
-
-        // $object = $xmlConfig->get($this->getXPath());
-
-        // if (is_null($object)) {
-        //     throw new OMVException(
-        //         OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
-        //         $this->getXPath()
-        //     );
-        // }
-
-        // $systemCtl = new OMVSystemCtl($this->getPluginName());
-
-        // return array(
-        //     "name"    => $this->getName(),
-        //     "title"   => gettext("TeamSpeak 3"),
-        //     "enabled" => boolval($object["enable"]),
-        //     "running" => $systemCtl->isActive()
         );
     }
 
@@ -112,35 +93,6 @@ class OMVModuleTeamspeak3 extends \OMV\Engine\Module\ServiceAbstract implements
         // Start this service and enable the unit file.
         $systemCtl = new \OMV\System\SystemCtl("teamspeak3");
         $systemCtl->enable(TRUE);
-
-        // global $xmlConfig;
-
-        // $object = $xmlConfig->get($this->getXPath());
-
-        // if (is_null($object)) {
-        //     throw new OMVException(
-        //         OMVErrorMsg::E_CONFIG_GET_OBJECT_FAILED,
-        //         $this->getXPath()
-        //     );
-        // }
-
-        // if (!boolval($object["enable"])) {
-        //     return;
-        // }
-
-        // // Use below or the $cmd way?
-        // $systemCtl = new OMVSystemCtl($this->getPluginName());
-        // $systemCtl->enable(true);
-
-        // //$cmd = "sudo -u ts3 /etc/init.d/teamspeak3 start && update-rc.d teamspeak3 enable > /dev/null";
-
-        // //if (0 !== $this->exec($cmd, $output)) {
-        // //    throw new OMVException(
-        // //        OMVErrorMsg::E_EXEC_FAILED,
-        // //        $cmd,
-        // //        implode(PHP_EOL, $output)
-        // //    );
-        // //}
     }
 
     public function stopService()
@@ -164,8 +116,6 @@ class OMVModuleTeamspeak3 extends \OMV\Engine\Module\ServiceAbstract implements
 
         $moduleMgr = \OMV\Engine\Module\Manager::getInstance();
 
-        // $moduleMgr = &OMVModuleMgre::getInstance();
-
         $dispatcher->addListener(
             OMV_NOTIFY_MODIFY,
             "org.openmediavault.conf.service.teamspeak3",
@@ -177,30 +127,5 @@ class OMVModuleTeamspeak3 extends \OMV\Engine\Module\ServiceAbstract implements
             "org.openmediavault.conf.service.teamspeak3",
             [ $moduleMgr->getModule("webserver"), "setDirty" ]
         );
-
-        // $moduleMgr = &OMVModuleMgr::getInstance();
-
-        // $dispatcher->addListener(
-        //     OMV_NOTIFY_MODIFY,
-        //     $this->getEventMessagePath(),
-        //     array($this, "setDirty")
-        // );
-
-        // $dispatcher->addListener(
-        //     OMV_NOTIFY_MODIFY,
-        //     $this->getEventMessagePath(),
-        //     array($moduleMgr->getModule("php5fpm"), "setDirty")
-        // );
-
-        // $dispatcher->addListener(
-        //     OMV_NOTIFY_MODIFY,
-        //     $this->getEventMessagePath(),
-        //     array($moduleMgr->getModule("webserver"), "setDirty")
-        // );
     }
 }
-
-// // Register module
-// $moduleMgr = &OMVModuleMgr::getInstance();
-// $moduleMgr->registerModule(new OMVModuleTeamspeak3());
-

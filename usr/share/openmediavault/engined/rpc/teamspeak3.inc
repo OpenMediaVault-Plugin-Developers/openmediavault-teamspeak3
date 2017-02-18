@@ -22,21 +22,6 @@
 
 class OMVRpcServiceTeamspeak3 extends \OMV\Rpc\ServiceAbstract
 {
-    // private function getPluginName()
-    // {
-    //     return strtolower($this->getName());
-    // }
-
-    // private function getEventMessagePath()
-    // {
-    //     return sprintf("org.openmediavault.service.%s", $this->getPluginName());
-    // }
-
-    // private function getXPath()
-    // {
-    //     return sprintf(" /config/services/%s", $this->getPluginName());
-    // }
-
     public function getName()
     {
         return "Teamspeak3";
@@ -90,15 +75,6 @@ class OMVRpcServiceTeamspeak3 extends \OMV\Rpc\ServiceAbstract
         $cmd = new \OMV\System\Process("omv-mkconf", "teamspeak3", "update");
         $cmd->setRedirect2to1();
         $cmd->execute();
-        // $cmd = sprintf("omv-mkconf %s update 2>&1", $this->getPluginName());
-
-        // if (0 !== $this->exec($cmd, $output)) {
-        //     throw new OMVException(
-        //         OMVErrorMsg::E_EXEC_FAILED,
-        //         $cmd,
-        //         implode(PHP_EOL, $output)
-        //     );
-        // }
 
         $dispatcher = \OMV\Engine\Notify\Dispatcher::getInstance();
         $dispatcher->notify(
@@ -106,13 +82,6 @@ class OMVRpcServiceTeamspeak3 extends \OMV\Rpc\ServiceAbstract
             'conf.services.teamspeak3',
             $object->getAssoc()
         );
-
-        // $dispatcher = &OMVNotifyDispatcher::getInstance();
-        // $dispatcher->notify(
-        //     OMV_NOTIFY_MODIFY,
-        //     $this->getEventMessagePath(),
-        //     $object
-        // );
     }
 
     public function doUpdateEULA($params, $context) 
@@ -120,20 +89,5 @@ class OMVRpcServiceTeamspeak3 extends \OMV\Rpc\ServiceAbstract
         $cmd = new \OMV\System\Process("omv-mkconf", "teamspeak3", "eula");
         $cmd->setRedirect2to1();
         $cmd->execute();
-        // $cmd->execute($output);
-
-        // $cmd = sprintf("omv-mkconf %s eula 2>&1", $this->getPluginName());
-
-        // if (0 !== $output) {
-        //     throw new OMVException(
-        //         OMVErrorMsg::E_EXEC_FAILED,
-        //         $cmd,
-        //         implode(PHP_EOL, $output)
-        //     );
-        // }
     }
 }
-
-// // Register the RPC service.
-// $rpcServiceMgr = &OMVRpcServiceMgr::getInstance();
-// $rpcServiceMgr->registerService(new OMVRpcServiceTeamspeak3());
