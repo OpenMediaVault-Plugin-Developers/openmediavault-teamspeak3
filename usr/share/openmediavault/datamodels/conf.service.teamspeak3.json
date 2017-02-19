@@ -1,0 +1,60 @@
+{
+	"type": "config",
+	"id": "conf.service.teamspeak3",
+	"title": "TeamSpeak 3",
+	"queryinfo": {
+		"xpath": "/config/services/teamspeak3",
+		"iterable": false
+	},
+	"properties": {
+		"enable": {
+			"type": "boolean",
+			"default": 0
+		},
+		"enablewi": {
+			"type": "boolean",
+			"default": 0
+		},
+		"password": {
+			"type": "string"
+		},
+		"vsport": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 65535,
+			"default": 9987
+		},
+		"queryport": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 65535,
+			"default": 10011
+		},
+		"fileport": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 65535,
+			"default": 30033
+		},
+		"showtab": {
+			"type": "boolean",
+			"default": 0
+		},
+		"languagewi": {
+			"type": "string",
+			"default": "en"
+		},
+		"eula": {
+			"type": "boolean",
+			"default": 0
+		},
+		"update": {
+			"type": "boolean",
+			"default": 0
+		},
+		"restartmsg": {
+			"type": "string"
+		}
+	}
+}
+

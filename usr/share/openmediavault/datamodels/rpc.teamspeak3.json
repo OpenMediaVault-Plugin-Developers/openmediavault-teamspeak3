@@ -1,0 +1,60 @@
+[{
+	"type": "rpc",
+	"id": "rpc.teamspeak3.setsettings",
+	"params": {
+		"type": "object",
+		"properties": {
+		    "enable": {
+		        "type": "boolean",
+		        "required": true
+		    },
+			"enablewi": {
+				"type": "boolean",
+		        "required": true
+			},
+			"password": {
+				"type": "string",
+		        "required": true
+			},
+			"vsport": {
+				"type": "integer",
+				"minimum": 1,
+				"maximum": 65535,
+		        "required": true
+			},
+			"queryport": {
+				"type": "integer",
+				"minimum": 1,
+				"maximum": 65535,
+		        "required": true
+			},
+			"fileport": {
+				"type": "integer",
+				"minimum": 1,
+				"maximum": 65535,
+		        "required": true
+			},
+			"showtab": {
+				"type": "boolean",
+		        "required": true
+			},
+			"languagewi": {
+				"type": "string",
+				"enum": [ "de", "en", "nl", "fr" ],
+		        "required": true
+			},
+			"eula": {
+				"type": "boolean",
+		        "required": true
+			},
+			"update": {
+				"type": "boolean",
+		        "required": true
+			},
+			"restartmsg": {
+				"type": "string",
+		        "required": true
+			}
+		}
+	}
+}]

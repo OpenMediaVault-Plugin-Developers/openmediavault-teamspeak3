@@ -2,13 +2,14 @@ Source: openmediavault-teamspeak3
 Section: net
 Priority: optional
 Maintainer: OpenMediaVault Plugin Developers <plugins@omv-extras.org>
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 9.0.0)
 Standards-Version: 3.9.6
 XB-Plugin-Section: gaming
+Homepage: http://omvextras.org/
 
 Package: openmediavault-teamspeak3
 Architecture: all
-Depends: openmediavault (= 3.0.13),
+Depends: openmediavault (>= 3.0.15),
          telnet,
          rsync,
          curl,

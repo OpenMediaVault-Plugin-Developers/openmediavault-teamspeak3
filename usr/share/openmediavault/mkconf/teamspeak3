@@ -1,4 +1,23 @@
 #!/bin/bash
+#
+# @license http://www.gnu.org/licenses/gpl.html GPL Version 3
+# @author Volker Theile <volker.theile@openmediavault.org>
+# @author OpenMediaVault Plugin Developers <plugins@omvextras.org>
+# @copyright Copyright (c) 2009-2013 Volker Theile
+# @copyright Copyright (c) 2013-2017 OpenMediaVault Plugin Developers
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 set -e
 
@@ -13,8 +32,9 @@ options="createinifile=1"
 TEAMSPEAK3_INI="/opt/teamspeak3/ts3server.ini"
 TS3WI_CONFIG="/usr/share/ts3wi/config.php"
 
-if [ ! "$2" == "getsettings" ] || [ ! "$2" == "update" ]; then
+if [ ! "$1" == "getsettings" ] || [ ! "$1" == "update" ]; then
 	if [ -d $APP_PATH ]; then
+		echo "if"
 		cat /dev/null > ${TEAMSPEAK3_INI}
 			xmlstarlet sel -t -m " /config/services/teamspeak3" \
 			-o "machine_id=" -n \
@@ -82,7 +102,9 @@ fi
 
 get_info() {
 	# Fetch latest version from www.teamspeak.com
-	LATEST_VERSION=`curl -s -L http://www.teamspeak.com/downloads#server | grep -A 6 'Server 64-bit' | head -n 2 | grep -Po '(?<=version">)[^<]+'`
+	# changed to be more flexible with page layout
+	# the version need to be in the form \d+\.
+	LATEST_VERSION=`curl -s -L http://www.teamspeak.com/downloads#server | grep -A 3 'Server 64-bit' | grep -P '\d\.' | awk 'NR==1 {print $1 }'`
 	if arch | grep x86_64 >/dev/null 2>&1; then
 		ARCHITECTURE="amd64"
 	else
@@ -104,6 +126,7 @@ dl_ts3() {
 }
 
 first_run() {
+	echo "firstrun"
 	if [ ! -d "$APP_PATH" ]; then
 		if [ $(omv_config_get ' /config/services/teamspeak3/enable') != "1" ]; then
 			exit 0
@@ -275,7 +298,7 @@ getsettings() {
 	fi
 }
 
-case "$2" in
+case "$1" in
   update)
 	update
 	;;
