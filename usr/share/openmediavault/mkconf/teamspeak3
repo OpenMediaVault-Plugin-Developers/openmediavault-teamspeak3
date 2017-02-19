@@ -24,6 +24,7 @@ set -e
 . /etc/default/openmediavault
 . /usr/share/openmediavault/scripts/helper-functions
 
+XPATH="/config/services/teamspeak3"
 APP_PATH="/opt/teamspeak3"
 USER="ts3"
 GROUP="nogroup"
@@ -36,7 +37,7 @@ if [ ! "$1" == "getsettings" ] || [ ! "$1" == "update" ]; then
 	if [ -d $APP_PATH ]; then
 		echo "if"
 		cat /dev/null > ${TEAMSPEAK3_INI}
-			xmlstarlet sel -t -m " /config/services/teamspeak3" \
+			xmlstarlet sel -t -m "${XPATH}" \
 			-o "machine_id=" -n \
 			-v "concat('default_voice_port=',vsport)" -n \
 			-o "voice_ip=0.0.0.0" -n \
@@ -62,9 +63,9 @@ if [ ! "$1" == "getsettings" ] || [ ! "$1" == "update" ]; then
 
 
 
-		if [ $(omv_config_get ' /config/services/teamspeak3/enablewi') != "0" ]; then
-			port=$(omv_config_get ' /config/services/teamspeak3/queryport')
-			lang=$(omv_config_get ' /config/services/teamspeak3/langquagewi')
+		if [ $(omv_config_get "${XPATH}/enablewi") != "0" ]; then
+			port=$(omv_config_get "${XPATH}/queryport")
+			lang=$(omv_config_get "${XPATH}/languagewi")
 
 			cat <<EOF > ${TS3WI_CONFIG}
 <?php
